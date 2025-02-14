@@ -45,6 +45,7 @@ export default defineConfig({
 ## remove?
 @tailwindcss/forms
 autoprefixer
+headlessui
 
 ## MONGODB
 ```

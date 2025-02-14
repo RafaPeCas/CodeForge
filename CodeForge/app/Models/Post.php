@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+
 use MongoDB\Laravel\Eloquent\Model;
+
+https://laraveldaily.com/post/mongodb-laravel-guide-beginners
 
 class Post extends Model
 {

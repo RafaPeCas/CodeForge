@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use MongoDB\Laravel\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -11,37 +11,37 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('jobs', function (Blueprint $table) {
-            $table->id();
-            $table->string('queue')->index();
-            $table->longText('payload');
-            $table->unsignedTinyInteger('attempts');
-            $table->unsignedInteger('reserved_at')->nullable();
-            $table->unsignedInteger('available_at');
-            $table->unsignedInteger('created_at');
+        Schema::create('jobs', function (Blueprint $collection) {
+            $collection->id();
+            $collection->index('queue');
+            $collection->longText('payload');
+            $collection->unsignedTinyInteger('attempts');
+            $collection->unsignedInteger('reserved_at')->nullable();
+            $collection->unsignedInteger('available_at');
+            $collection->unsignedInteger('created_at');
         });
 
-        Schema::create('job_batches', function (Blueprint $table) {
-            $table->string('id')->primary();
-            $table->string('name');
-            $table->integer('total_jobs');
-            $table->integer('pending_jobs');
-            $table->integer('failed_jobs');
-            $table->longText('failed_job_ids');
-            $table->mediumText('options')->nullable();
-            $table->integer('cancelled_at')->nullable();
-            $table->integer('created_at');
-            $table->integer('finished_at')->nullable();
+        Schema::create('job_batches', function (Blueprint $collection) {
+            $collection->string('id')->primary();
+            $collection->string('name');
+            $collection->integer('total_jobs');
+            $collection->integer('pending_jobs');
+            $collection->integer('failed_jobs');
+            $collection->longText('failed_job_ids');
+            $collection->mediumText('options')->nullable();
+            $collection->integer('cancelled_at')->nullable();
+            $collection->integer('created_at');
+            $collection->integer('finished_at')->nullable();
         });
 
-        Schema::create('failed_jobs', function (Blueprint $table) {
-            $table->id();
-            $table->string('uuid')->unique();
-            $table->text('connection');
-            $table->text('queue');
-            $table->longText('payload');
-            $table->longText('exception');
-            $table->timestamp('failed_at')->useCurrent();
+        Schema::create('failed_jobs', function (Blueprint $collection) {
+            $collection->id();
+            $collection->unique('uuid');
+            $collection->text('connection');
+            $collection->text('queue');
+            $collection->longText('payload');
+            $collection->longText('exception');
+            $collection->timestamp('failed_at')->useCurrent();
         });
     }
 

@@ -19,6 +19,10 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/createProject', function () {
+    return Inertia::render('Form');
+})->middleware(['auth', 'verified'])->name('Form');
+
 Route::post("/project", [ProjectController::class, "store"])->name("project.create");
 
 Route::middleware('auth')->group(function () {

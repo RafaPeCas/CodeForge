@@ -1,4 +1,4 @@
-import { Button } from '@/Components/ui/button';
+import { Button } from '@/Components';
 import { PageProps } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 

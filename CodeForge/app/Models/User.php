@@ -7,10 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use MongoDB\Laravel\Auth\User as Authenticatable;
 
-use MongoDB\Laravel\Eloquent\Model;
 use MongoDB\BSON\ObjectId;
 
-class User extends Model
+class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -51,11 +50,11 @@ class User extends Model
         ];
     }
 
-    public function addSpace(User $user, string $role = 'read_only')
+    public function addSpace(Space $space)
     {
         $this->push('spaces', [
             'id' => new ObjectId($space->_id),
-            'name' => $role,
+            'name' => $space->name,
         ]);
     }
 

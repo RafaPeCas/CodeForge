@@ -29,57 +29,108 @@ class DatabaseSeeder extends Seeder
         // $this->call(NotebooksCollectionSeeder::class);
         // $this->call(PagesCollectionSeeder::class);
       // Create a user
-      $user = User::create([
-        'username' => 'testuser',
-        'email' => 'test@example.com',
-        'password' => bcrypt('password'),
-    ]);
 
-    // Create a space
-    $space = Space::create([
-        'name' => 'Test Space',
-        'description' => 'This is a test space.',
-        'author' => $user->_id,
-    ]);
-
-    // Add the user to the space members
-    $space->members()->create([
-        'id' => $user->_id,
-        'role' => 'admin',
-    ]);
-
-    // **Update the user's spaces array**
-    $user->push('spaces', [
-            'id' => $space->_id,
-            'name' => $space->name
+        // Create a user
+        $user = User::create([
+            'username' => 'testuser',
+            'email' => 'test@example.com',
+            'password' => bcrypt('password'),
         ]);
 
+        // Create a space
+        $space = Space::create([
+            'name' => 'Test Space',
+            'description' => 'This is a test space.',
+            'author' => $user->_id,
+        ]);
 
-    // Create a notebook
-    $notebook = Notebook::create([
-        'name' => 'Test Notebook',
-        'description' => 'This is a test notebook.',
-        'spaceId' => $space->_id,
-    ]);
+        // Add the space to the user's spaces array
+        $user->addSpace($space);//$user, 'admin'
+        $user->save();
 
-    // Create a page
-    $page = Page::create([
-        'title' => 'Test Page',
-        'notebookId' => $notebook->_id,
-        'author' => $user->_id,
-    ]);
+        // Add the user as a member of the space
+        $space->addMember($user, 'admin');
+        $space->save();
 
-    // Create a subpage
-    $subpage = Page::create([
-        'title' => 'Test Subpage',
-        'notebookId' => $notebook->_id,
-        'author' => $user->_id,
-        'parentPage' => $page->_id,
-    ]);
+        // Create a notebook
+        $notebook = Notebook::create([
+            'name' => 'Test Notebook',
+            'description' => 'This is a test notebook.',
+            'spaceId' => $space->_id,
+        ]);
 
-    // Attach subpage to the parent page
-    $page->subpages()->save($subpage);
+        // Add the notebook to the space's notebooks array
+        $space->addNotebook($notebook);
+        $space->save();
 
+        // Create a page
+        $page = Page::create([
+            'title' => 'Test Page',
+            'blocks' => [
+                [
+                    'type' => 'heading',
+                    'level' => 1,
+                    'content' => 'Welcome to the Test Page',
+                ],
+                [
+                    'type' => 'paragraph',
+                    'content' => 'This is a test page.',
+                ],
+            ],
+            'notebookId' => $notebook->_id,
+            'author' => $user->_id,
+            'version' => 1,
+        ]);
+
+        // Add the page to the notebook's pages array
+        $notebook->addPage($page);
+        $notebook->save();
+
+        // Create a subpage
+        $subpage = Page::create([
+            'title' => 'Test Subpage',
+            'blocks' => [
+                [
+                    'type' => 'heading',
+                    'level' => 2,
+                    'content' => 'Welcome to the Test Subpage',
+                ],
+                [
+                    'type' => 'paragraph',
+                    'content' => 'This is a test subpage.',
+                ],
+            ],
+            'notebookId' => $notebook->_id,
+            'author' => $user->_id,
+            'parentPage' => $page->_id,
+            'createdAt' => now(),
+            'updatedAt' => now(),
+            'version' => 1,
+        ]);
+
+        // Add the subpage to the parent page's subpages array
+        $page->addSubpage($subpage);
+        $page->save();
+
+        // Add a version to the page's history
+        $page->addVersion([
+            'version' => 2,
+            'title' => 'Updated Test Page',
+            'blocks' => [
+                [
+                    'type' => 'heading',
+                    'level' => 1,
+                    'content' => 'Welcome to the Updated Test Page',
+                ],
+                [
+                    'type' => 'paragraph',
+                    'content' => 'This is an updated test page.',
+                ],
+            ],
+            'updatedAt' => now(),
+            'updatedBy' => $user->_id,
+        ]);
+        $page->save();
 
     }
 }

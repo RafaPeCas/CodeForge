@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use MongoDB\Laravel\Eloquent\Model;
+use MongoDB\BSON\ObjectId;
 
 class Page extends Model
 {

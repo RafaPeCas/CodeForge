@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Space;
 use Illuminate\Database\Seeder;
 use MongoDB\BSON\ObjectId;
+use App\Models\User;
 
 class SpacesCollectionSeeder extends Seeder
 {
@@ -13,19 +14,25 @@ class SpacesCollectionSeeder extends Seeder
      */
     public function run(): void
     {
-        Space::create([
-            'name' => 'Example Space',
-            'description' => 'This is an example space.',
-            'owner' => new ObjectId(),
-            'members' => [
-                ['id' => new ObjectId(), 'role' => 'read-only'],
-                ['id' => new ObjectId(), 'role' => 'read-write'],
-                ['id' => new ObjectId(), 'role' => 'admin'],
-            ],
-            'notebooks' => [
-                ['id' => new ObjectId(), 'name' => 'Notebook 1'],
-                ['id' => new ObjectId(), 'name' => 'Notebook 2'],
-            ],
+        $user = User::where('email', 'test@example.com')->first();
+
+        $space = Space::create([
+            'name' => 'Test Space',
+            'description' => 'This is a test space.',
+            'author' => $user->_id,
         ]);
+
+        // Agregar usuario como miembro del espacio
+        $space->members()->create([
+            'id' => $user->_id,
+            'role' => 'admin',
+        ]);
+
+        // Actualizar espacios del usuario
+        $user->push('spaces', [
+            'id' => $space->_id,
+            'name' => $space->name
+        ]);
+        
     }
 }

@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use App\Models\Space;
+use MongoDB\BSON\ObjectId;
 
 class UsersCollectionSeeder extends Seeder
 {
@@ -13,14 +15,27 @@ class UsersCollectionSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
-            'username' => 'john_doe',
-            'email' => 'john@example.com',
+        // Clear existing users
+        User::truncate();
+
+        // Create a user
+        $user = User::create([
+            'username' => 'testuser',
+            'email' => 'test@example.com',
             'password' => bcrypt('password'),
-            'spaces' => [
-                ['id' => new \MongoDB\BSON\ObjectId(), 'name' => 'Space 1'],
-                ['id' => new \MongoDB\BSON\ObjectId(), 'name' => 'Space 2'],
-            ],
         ]);
+
+        // Create a space and associate it with the user
+        $space = Space::create([
+            'name' => 'Test Space',
+            'description' => 'This is a test space.',
+            'author' => $user->_id,
+            'createdAt' => now(),
+            'updatedAt' => now(),
+        ]);
+
+        // Add the space to the user's spaces array
+        $user->addSpace($space);
+        $user->save();
     }
 }

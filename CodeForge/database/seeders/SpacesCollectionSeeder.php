@@ -2,10 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Space;
 use Illuminate\Database\Seeder;
-use MongoDB\BSON\ObjectId;
+use App\Models\Space;
 use App\Models\User;
+use App\Models\Notebook;
+use MongoDB\BSON\ObjectId;
 
 class SpacesCollectionSeeder extends Seeder
 {
@@ -14,25 +15,44 @@ class SpacesCollectionSeeder extends Seeder
      */
     public function run(): void
     {
-        $user = User::where('email', 'test@example.com')->first();
+        // Clear existing spaces
+        Space::truncate();
 
+        // Find or create a user
+        $user = User::firstOrCreate([
+            'username' => 'testuser',
+        ], [
+            'email' => 'test@example.com',
+            'password' => bcrypt('password'),
+            'createdAt' => now(),
+            'updatedAt' => now(),
+        ]);
+
+        // Create a space
         $space = Space::create([
             'name' => 'Test Space',
             'description' => 'This is a test space.',
             'author' => $user->_id,
+            'createdAt' => now(),
+            'updatedAt' => now(),
         ]);
 
-        // Agregar usuario como miembro del espacio
-        $space->members()->create([
-            'id' => $user->_id,
-            'role' => 'admin',
+        // Add the user as a member of the space
+        $space->addMember($user, 'admin');
+        $space->save();
+
+        // Create a notebook and associate it with the space
+        $notebook = Notebook::create([
+            'name' => 'Test Notebook',
+            'description' => 'This is a test notebook.',
+            'spaceId' => $space->_id,
+            'createdAt' => now(),
+            'updatedAt' => now(),
         ]);
 
-        // Actualizar espacios del usuario
-        $user->push('spaces', [
-            'id' => $space->_id,
-            'name' => $space->name
-        ]);
+        // Add the notebook to the space's notebooks array
+        $space->addNotebook($notebook);
+        $space->save();
         
     }
 }

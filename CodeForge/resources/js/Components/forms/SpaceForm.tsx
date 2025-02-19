@@ -1,4 +1,4 @@
-import "./Projectform.css";
+import "./SpaceForm.css";
 import { Button } from "../index";
 
 interface Props {

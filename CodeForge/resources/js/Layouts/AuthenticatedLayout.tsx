@@ -37,7 +37,7 @@ export default function Authenticated({
                                     href={route('Form')}
                                     active={route().current('Form')}
                                 >
-                                    Crear proyecto
+                                    Create Space
                                 </NavLink>
                             </div>
                         </div>

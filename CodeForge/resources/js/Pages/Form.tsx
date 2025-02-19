@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Form } from "@/Components";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
-export default function ProjectForm() {
+export default function SpaceForm() {
     const [form, setForm] = useState({ name: "", description: "" });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -15,10 +15,10 @@ export default function ProjectForm() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await axios.post("/project", form);
-            alert(`Project created: ${response.data.name}`);
+            const response = await axios.post("/space", form);
+            alert(`Space created: ${response.data.name}`);
         } catch (error) {
-            alert("Error creating project");
+            alert("Error creating Space");
         }
     };
 
@@ -26,12 +26,12 @@ export default function ProjectForm() {
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Crear Proyecto
+                    Crear Espacio
                 </h2>
             }
         >
-            <Head title="Crear Proyecto" />
-            <h2 className="text-xl font-bold mb-4">Create Project</h2>
+            <Head title="Crear Espacio" />
+            <h2 className="text-xl font-bold mb-4">Create Space</h2>
             <Form
                 inputValue={form.name}
                 textareaDescription={form.description}

@@ -3,24 +3,29 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use MongoDB\Laravel\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;  
 use Illuminate\Notifications\Notifiable;
+use MongoDB\Laravel\Auth\User as Authenticatable;
 
-class User extends Authenticatable
+use MongoDB\Laravel\Eloquent\Model;
+use MongoDB\BSON\ObjectId;
+
+class User extends Model
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+    * The attributes that are mass assignable.
+    *
+    * @var list<string>
+    */
+    protected $collection = 'users';
     protected $fillable = [
-        'name',
+        'username',
         'email',
         'password',
+        'spaces',
     ];
 
     /**
@@ -45,4 +50,21 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function addSpace(User $user, string $role = 'read_only')
+    {
+        $this->push('spaces', [
+            'id' => new ObjectId($space->_id),
+            'name' => $role,
+        ]);
+    }
+
+    public function addNotebook(Notebook $notebook)
+    {
+        $this->push('notebooks', [
+            'id' => new ObjectId($notebook->_id),
+            'name' => $notebook->name,
+        ]);
+    }
+
 }

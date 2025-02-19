@@ -99,3 +99,101 @@
     @apply bg-background text-foreground;
   }
 }
+/* Orange */
+:root {
+  --background: rgb(255 248 245);
+  --foreground: rgb(34 26 21);
+  --card: rgb(255 248 245);
+  --card-foreground: rgb(34 26 21);
+  --popover: rgb(255 248 245);
+  --popover-foreground: rgb(34 26 21);
+  --primary: rgb(138 80 34);
+  --primary-foreground: rgb(255 255 255);
+  --secondary: rgb(117 88 69);
+  --secondary-foreground: rgb(255 255 255);
+  --tertiary: rgb(95 97 53);
+  --tertiary-foreground: rgb(255 255 255);
+  --muted: rgb(243 222 211);
+  --muted-foreground: rgb(82 68 59);
+  --accent: rgb(117 88 69);
+  --accent-foreground: rgb(255 255 255);
+  --destructive: rgb(186 26 26);
+  --destructive-foreground: rgb(255 255 255);
+  --border: rgb(132 116 106);
+  --input: rgb(215 195 183);
+  --ring: rgb(138 80 34);
+  --radius: 0.6rem;
+}
+
+.dark {
+  --background: rgb(25 18 13);
+  --foreground: rgb(240 223 214);
+  --card: rgb(25 18 13);
+  --card-foreground: rgb(240 223 214);
+  --popover: rgb(25 18 13);
+  --popover-foreground: rgb(240 223 214);
+  --primary: rgb(255 183 132);
+  --primary-foreground: rgb(80 37 0);
+  --secondary: rgb(228 191 168);
+  --secondary-foreground: rgb(66 43 27);
+  --tertiary: rgb(200 202 148);
+  --tertiary-foreground: rgb(48 51 11);
+  --muted: rgb(82 68 59);
+  --muted-foreground: rgb(215 195 183);
+  --accent: rgb(228 191 168);
+  --accent-foreground: rgb(66 43 27);
+  --destructive: rgb(255 180 171);
+  --destructive-foreground: rgb(105 0 5);
+  --border: rgb(159 141 131);
+  --input: rgb(82 68 59);
+  --ring: rgb(255 183 132);
+}
+/* Green */
+.light {
+  --md-sys-color-primary: rgb(13, 107, 88);
+  --md-sys-color-surface-tint: rgb(13, 107, 88);
+  --md-sys-color-on-primary: rgb(255, 255, 255);
+  --md-sys-color-primary-container: rgb(162, 242, 218);
+  --md-sys-color-on-primary-container: rgb(0, 32, 25);
+  --md-sys-color-secondary: rgb(75, 99, 91);
+  --md-sys-color-on-secondary: rgb(255, 255, 255);
+  --md-sys-color-secondary-container: rgb(205, 233, 222);
+  --md-sys-color-on-secondary-container: rgb(7, 32, 25);
+  --md-sys-color-tertiary: rgb(65, 98, 119);
+  --md-sys-color-on-tertiary: rgb(255, 255, 255);
+  --md-sys-color-tertiary-container: rgb(198, 231, 255);
+  --md-sys-color-on-tertiary-container: rgb(0, 30, 45);
+  --md-sys-color-error: rgb(186, 26, 26);
+  --md-sys-color-on-error: rgb(255, 255, 255);
+  --md-sys-color-error-container: rgb(255, 218, 214);
+  --md-sys-color-on-error-container: rgb(65, 0, 2);
+  --md-sys-color-background: rgb(245, 251, 247);
+  --md-sys-color-on-background: rgb(23, 29, 27);
+  --md-sys-color-surface: rgb(245, 251, 247);
+  --md-sys-color-on-surface: rgb(23, 29, 27);
+}
+
+/* Dark Theme */
+.dark {
+  --md-sys-color-primary: rgb(134, 214, 191);
+  --md-sys-color-surface-tint: rgb(134, 214, 191);
+  --md-sys-color-on-primary: rgb(0, 56, 45);
+  --md-sys-color-primary-container: rgb(0, 81, 66);
+  --md-sys-color-on-primary-container: rgb(162, 242, 218);
+  --md-sys-color-secondary: rgb(178, 204, 194);
+  --md-sys-color-on-secondary: rgb(29, 53, 46);
+  --md-sys-color-secondary-container: rgb(52, 76, 68);
+  --md-sys-color-on-secondary-container: rgb(205, 233, 222);
+  --md-sys-color-tertiary: rgb(169, 203, 227);
+  --md-sys-color-on-tertiary: rgb(15, 52, 71);
+  --md-sys-color-tertiary-container: rgb(41, 74, 94);
+  --md-sys-color-on-tertiary-container: rgb(198, 231, 255);
+  --md-sys-color-error: rgb(255, 180, 171);
+  --md-sys-color-on-error: rgb(105, 0, 5);
+  --md-sys-color-error-container: rgb(147, 0, 10);
+  --md-sys-color-on-error-container: rgb(255, 218, 214);
+  --md-sys-color-background: rgb(15, 21, 19);
+  --md-sys-color-on-background: rgb(222, 228, 224);
+  --md-sys-color-surface: rgb(15, 21, 19);
+  --md-sys-color-on-surface: rgb(222, 228, 224);
+}

@@ -20,6 +20,8 @@ class SpaceController extends Controller
              'name' => $name,
              'description' => $description,
              'author' => $userId,
+             'members' => [],
+             'notebooks' => [],
          ]);
         return response()->json($Space, 201);
     }

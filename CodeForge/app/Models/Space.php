@@ -11,7 +11,7 @@ class Space extends Model
     protected $fillable = [
         'name',
         'description',
-        'owner',
+        'author',
         'members',
         'notebooks',
     ];

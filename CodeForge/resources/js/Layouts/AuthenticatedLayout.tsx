@@ -33,6 +33,12 @@ export default function Authenticated({
                                 >
                                     Dashboard
                                 </NavLink>
+                                <NavLink
+                                    href={route('Form')}
+                                    active={route().current('Form')}
+                                >
+                                    Create Space
+                                </NavLink>
                             </div>
                         </div>
 

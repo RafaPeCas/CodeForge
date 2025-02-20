@@ -23,7 +23,10 @@ Route::get('/createSpace', function () {
     return Inertia::render('Form');
 })->middleware(['auth', 'verified'])->name('Form');
 
-Route::post("/space", [SpaceController::class, "store"])->name("Space.create");
+Route::middleware('auth')->group(function () {
+    Route::post("/space", [SpaceController::class, "store"])->name("Space.create");
+    Route::get("/space", [SpaceController::class, "index"])->name("Space.index");
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

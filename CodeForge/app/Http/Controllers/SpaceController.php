@@ -7,8 +7,7 @@ class SpaceController extends Controller
 {
     public function index()
     {
-        $Spaces = Space::all();
-        return response()->json($Spaces);
+        return response()->json(Space::paginate(5)); // Devuelve 5 espacios por página
     }
 
     public function store(Request $request)

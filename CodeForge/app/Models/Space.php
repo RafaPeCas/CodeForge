@@ -19,7 +19,7 @@ class Space extends Model
     public function addMember(User $user, string $role = 'member')
     {
         $this->push('members', [
-            'id' => new \MongoDB\BSON\ObjectId($user->_id),
+            'id' => new ObjectId($user->_id),
             'role' => $role
         ]);
     }

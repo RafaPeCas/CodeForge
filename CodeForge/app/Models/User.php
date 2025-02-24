@@ -58,12 +58,4 @@ class User extends Authenticatable
         ]);
     }
 
-    public function addNotebook(Notebook $notebook)
-    {
-        $this->push('notebooks', [
-            'id' => new ObjectId($notebook->_id),
-            'name' => $notebook->name,
-        ]);
-    }
-
 }

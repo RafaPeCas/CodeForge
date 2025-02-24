@@ -1,7 +1,9 @@
 <?php
 namespace App\Http\Controllers;
+
 use App\Models\Space;
 use Illuminate\Http\Request;
+use MongoDB\BSON\ObjectId;
 
 class SpaceController extends Controller
 {
@@ -14,7 +16,7 @@ class SpaceController extends Controller
     {
          $name = $request->input("name");
          $description = $request->input("description");
-         $userId = $request->user()->id;
+         $userId = new objectId($request->user()->id);
          $Space = Space::create([
              'name' => $name,
              'description' => $description,

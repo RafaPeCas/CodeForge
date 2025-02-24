@@ -5,29 +5,28 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Page;
 use App\Models\Notebook;
+use MongoDB\BSON\ObjectId;
 
 class PageController extends Controller
 {
         // Create a new page
-        public function create(Request $request)
+        public function store(Request $request)
         {
             $request->validate([
                 'title' => 'required|string|max:255',
                 'blocks' => 'required|array',
                 'notebookId' => 'required|exists:notebooks,_id',
-                'author' => 'required|exists:users,_id',
                 'parentPage' => 'nullable|exists:pages,_id',
             ]);
-    
+            // 'author' => 'required|exists:users,_id',
+            
             $page = Page::create([
                 'title' => $request->title,
                 'blocks' => $request->blocks,
-                'notebookId' => $request->notebookId,
-                'author' => $request->author,
-                'parentPage' => $request->parentPage ?? null,
+                'notebookId' =>new objectId($request->notebookId),
+                'author' => new objectId($request->user()->id),
+                'parentPage' => new objectId($request->parentPage) ?? null,
                 'version' => 1,
-                'createdAt' => now(),
-                'updatedAt' => now(),
             ]);
     
             // If it's a subpage, add to the parent
@@ -46,7 +45,7 @@ class PageController extends Controller
         }
     
         // Get pages in a notebook
-        public function listAll($notebookId)
+        public function index($notebookId)
         {
             $pages = Page::where('notebookId', $notebookId)->get();
             return response()->json($pages);

@@ -29,7 +29,7 @@ class UsersCollectionSeeder extends Seeder
         $space = Space::create([
             'name' => 'Test Space',
             'description' => 'This is a test space.',
-            'author' => $user->_id,
+            'author' => new ObjectId($user->_id),
             'createdAt' => now(),
             'updatedAt' => now(),
         ]);

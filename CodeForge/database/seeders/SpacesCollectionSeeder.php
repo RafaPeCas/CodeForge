@@ -32,7 +32,7 @@ class SpacesCollectionSeeder extends Seeder
         $space = Space::create([
             'name' => 'Test Space',
             'description' => 'This is a test space.',
-            'author' => $user->_id,
+            'author' => new ObjectId($user->_id),
             'createdAt' => now(),
             'updatedAt' => now(),
         ]);
@@ -45,7 +45,7 @@ class SpacesCollectionSeeder extends Seeder
         $notebook = Notebook::create([
             'name' => 'Test Notebook',
             'description' => 'This is a test notebook.',
-            'spaceId' => $space->_id,
+            'spaceId' => new ObjectId($space->_id),
             'createdAt' => now(),
             'updatedAt' => now(),
         ]);

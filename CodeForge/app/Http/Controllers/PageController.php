@@ -67,8 +67,11 @@ class PageController extends Controller
                 'version' => $page->version + 1,
                 'title' => $request->title ?? $page->title,
                 'blocks' => $request->blocks ?? $page->blocks,
+                'notebookId' =>new objectId($request->notebookId),
+                'author' => new objectId($request->user()->id),
+                'parentPage' => new objectId($request->parentPage) ?? null,
                 'updatedAt' => now(),
-                'updatedBy' => $request->updatedBy ?? $page->author,
+                'updatedBy' => new objectId($request->updatedBy) ?? $page->author,
             ]);
     
             $page->save();

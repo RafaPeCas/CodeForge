@@ -22,7 +22,7 @@ class PagesCollectionSeeder extends Seeder
             'name' => 'Test Notebook',
         ], [
             'description' => 'This is a test notebook.',
-            'spaceId' => Space::first()->_id,
+            'spaceId' => new ObjectId(Space::first()->_id),
             'createdAt' => now(),
             'updatedAt' => now(),
         ]);
@@ -41,8 +41,8 @@ class PagesCollectionSeeder extends Seeder
                     'content' => 'This is a test page.',
                 ],
             ],
-            'notebookId' => $notebook->_id,
-            'author' => User::first()->_id,
+            'notebookId' => new ObjectId($notebook->_id),
+            'author' => new ObjectId(User::first()->_id),
             'createdAt' => now(),
             'updatedAt' => now(),
             'version' => 1,
@@ -62,9 +62,9 @@ class PagesCollectionSeeder extends Seeder
                     'content' => 'This is a test subpage.',
                 ],
             ],
-            'notebookId' => $notebook->_id,
-            'author' => User::first()->_id,
-            'parentPage' => $page->_id,
+            'notebookId' => new ObjectId($notebook->_id),
+            'author' => new ObjectId(User::first()->_id),
+            'parentPage' => new ObjectId($page->_id),
             'createdAt' => now(),
             'updatedAt' => now(),
             'version' => 1,
@@ -90,7 +90,7 @@ class PagesCollectionSeeder extends Seeder
                 ],
             ],
             'updatedAt' => now(),
-            'updatedBy' => User::first()->_id,
+            'updatedBy' => new ObjectId(User::first()->_id),
         ]);
         $page->save();
     }

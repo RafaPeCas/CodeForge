@@ -27,6 +27,7 @@ Route::get('/createSpace', function () {
 
 Route::middleware('auth')->group(function () {
     Route::post("/space", [SpaceController::class, "store"])->name("Space.create");
+    Route::put("/space/{id}", [SpaceController::class, "update"])->name("Space.update");
     Route::get("/space", [SpaceController::class, "index"])->name("Space.index");
 });
 

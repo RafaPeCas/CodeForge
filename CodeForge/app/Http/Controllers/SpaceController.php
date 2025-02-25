@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Space;
@@ -14,16 +15,18 @@ class SpaceController extends Controller
 
     public function store(Request $request)
     {
-         $name = $request->input("name");
-         $description = $request->input("description");
-         $userId = new objectId($request->user()->id);
-         $Space = Space::create([
-             'name' => $name,
-             'description' => $description,
-             'author' => $userId,
-             'members' => [],
-             'notebooks' => [],
-         ]);
+
+        $name = $request->input("spaceName");
+        $description = $request->input("spaceDescription");
+        $userId = new  ObjectId($request->user()->id);
+        $Space = Space::create([
+            'name' => $name,
+            'description' => $description,
+            'author' => $userId,
+            'members' => [],
+            'notebooks' => [],
+        ]);
+
         return response()->json($Space, 201);
     }
 
@@ -35,15 +38,24 @@ class SpaceController extends Controller
 
     public function update(Request $request, $id)
     {
-        $Space = Space::findOrFail($id);
-        $Space->update($request->all());
-        return response()->json($Space);
+        $space = Space::find($id);
+        error_log($space);
+        $space->name = $request->spaceName;
+        $space->description = $request->spaceDescription;
+        error_log($space);
+        $space->save();
+        error_log($space);
+ 
+        return response()->json(["result" => "ok"], 201);  
     }
+
+
 
     public function destroy($id)
     {
-        $Space = Space::findOrFail($id);
-        $Space->delete();
+        error_log("Eliminando espacio con ID: " . $id);
+        $space = Space::find($id);
+        $space->delete();
         return response()->json(null, 204);
     }
 }

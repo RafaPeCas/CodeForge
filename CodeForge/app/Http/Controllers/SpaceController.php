@@ -30,23 +30,36 @@ class SpaceController extends Controller
         return response()->json($Space, 201);
     }
 
-    public function show($id)
-    {
-        $Space = Space::findOrFail($id);
-        return response()->json($Space);
+    public function show()
+    {;
+
+        $userId = auth()->id();
+
+        if ($userId) {
+            $spaces = Space::where('author', new ObjectId($userId))->get();
+        } else {
+            $spaces = collect(); // Colección vacía si el usuario no está autenticado
+        }
+        error_log($userId);
+        $filteredSpaces = $spaces->map(function ($space) {
+            return [
+                'name' => $space->name,
+                'logo' => "This is the logo", // Transformar el logo a una URL
+                'plan' => "This is the plan",
+            ];
+        });
+        error_log($spaces);
+        return response()->json($filteredSpaces);
     }
 
     public function update(Request $request, $id)
     {
         $space = Space::find($id);
-        error_log($space);
         $space->name = $request->spaceName;
         $space->description = $request->spaceDescription;
-        error_log($space);
         $space->save();
-        error_log($space);
- 
-        return response()->json(["result" => "ok"], 201);  
+
+        return response()->json(["result" => "ok"], 201);
     }
 
 

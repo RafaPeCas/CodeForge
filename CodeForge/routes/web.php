@@ -33,6 +33,7 @@ Route::middleware('auth')->group(function () {
     Route::post("/space", [SpaceController::class, "store"])->name("Space.create");
     Route::put("/space/{id}", [SpaceController::class, "update"])->name("Space.update");
     Route::get("/space", [SpaceController::class, "index"])->name("Space.index");
+    Route::get("/sidebar", [SpaceController::class, "show"])->name("Space.show");
 });
 
 Route::middleware('auth')->group(function () {

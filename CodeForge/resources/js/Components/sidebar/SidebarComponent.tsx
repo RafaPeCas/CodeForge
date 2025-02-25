@@ -24,6 +24,8 @@ import {
 
 import { SpaceSwitch } from "@/Components/sidebar/SpaceSwitch";
 import { Link } from "@inertiajs/react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 // Menu items.
 const items = [
@@ -56,6 +58,12 @@ const items = [
     },
 ];
 
+interface Space {
+    name: string;
+    logo: string; // Cambiado a string porque el logo vendrá como URL o nombre de archivo
+    plan: string;
+}
+
 const data = {
     spaces: [
         {
@@ -77,10 +85,30 @@ const data = {
 };
 
 export function SidebarComponent() {
+    const [spaces, setSpaces] = useState([
+        {
+            name: "Cargando...",
+            logo: "DefaultLogo",
+            plan: "Cargando...",
+        },
+    ]);
+
+    const fetchSpaces = async () => {
+        try {
+            const response = await axios.get("/sidebar");
+            setSpaces(response.data);
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    };
+    useEffect(() => {
+        fetchSpaces();
+    }, []);
+
     return (
         <Sidebar collapsible="icon">
             <SidebarHeader>
-                <SpaceSwitch spaces={data.spaces} />
+                <SpaceSwitch spaces={spaces} />
             </SidebarHeader>
             <SidebarContent>
                 <SidebarGroup>
@@ -121,6 +149,7 @@ export function SidebarComponent() {
             {/* <SidebarFooter>
                 <SpaceSwitch /> 
             </SidebarFooter> */}
+            
             <SidebarRail />
         </Sidebar>
     );

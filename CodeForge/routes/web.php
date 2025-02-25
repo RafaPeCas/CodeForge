@@ -25,6 +25,10 @@ Route::get('/createSpace', function () {
     return Inertia::render('Form');
 })->middleware(['auth', 'verified'])->name('Form');
 
+Route::get('/sidebarPage', function () {
+    return Inertia::render('SidebarPage');
+})->middleware(['auth', 'verified'])->name('sidebarPage');
+
 Route::post("/space", [SpaceController::class, "store"])->name("Space.create");
 
 Route::middleware('auth')->group(function () {
@@ -37,6 +41,7 @@ Route::middleware('auth')->group(function () {
 Route::prefix('notebooks')->group(function () {
     Route::post('/', [NotebookController::class, 'store'])->name('notebooks.create'); //create a nootebook
     Route::get('/{spaceId}', [NotebookController::class, 'index'])->name('notebooks.index'); // all the notebooks in a space
+    Route::put('/{id}', [NotebookController::class, 'update'])->name('notebooks.update'); // update a notebook
     Route::get('/show/{id}', [NotebookController::class, 'show'])->name('notebooks.show'); // get a single notebook
     Route::delete('/{id}', [NotebookController::class, 'destroy'])->name('notebooks.destroy'); // destroy a notebook
 });

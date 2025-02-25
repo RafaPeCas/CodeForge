@@ -23,7 +23,7 @@ class NotebooksCollectionSeeder extends Seeder
             'name' => 'Test Space',
         ], [
             'description' => 'This is a test space.',
-            'author' => User::first()->_id,
+            'author' => new ObjectId(User::first()->_id),
             'createdAt' => now(),
             'updatedAt' => now(),
         ]);
@@ -32,7 +32,7 @@ class NotebooksCollectionSeeder extends Seeder
         $notebook = Notebook::create([
             'name' => 'Test Notebook',
             'description' => 'This is a test notebook.',
-            'spaceId' => $space->_id,
+            'spaceId' => new ObjectId($space->_id),
             'createdAt' => now(),
             'updatedAt' => now(),
         ]);
@@ -51,8 +51,8 @@ class NotebooksCollectionSeeder extends Seeder
                     'content' => 'This is a test page.',
                 ],
             ],
-            'notebookId' => $notebook->_id,
-            'author' => User::first()->_id,
+            'notebookId' => new ObjectId($notebook->_id),
+            'author' => new ObjectId(User::first()->_id),
             'createdAt' => now(),
             'updatedAt' => now(),
             'version' => 1,

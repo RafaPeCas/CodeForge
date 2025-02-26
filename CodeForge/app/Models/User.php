@@ -3,7 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;  
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use MongoDB\Laravel\Auth\User as Authenticatable;
 
@@ -15,10 +15,10 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     /**
-    * The attributes that are mass assignable.
-    *
-    * @var list<string>
-    */
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
     protected $collection = 'users';
     protected $fillable = [
         'username',
@@ -26,6 +26,7 @@ class User extends Authenticatable
         'password',
         'spaces',
     ];
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -57,5 +58,4 @@ class User extends Authenticatable
             'name' => $space->name,
         ]);
     }
-
 }

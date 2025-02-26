@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Space;
+use App\Models\User;
 use Illuminate\Http\Request;
 use MongoDB\BSON\ObjectId;
 
@@ -19,6 +20,7 @@ class SpaceController extends Controller
         $name = $request->input("spaceName");
         $description = $request->input("spaceDescription");
         $userId = new  ObjectId($request->user()->id);
+
         $Space = Space::create([
             'name' => $name,
             'description' => $description,
@@ -27,30 +29,43 @@ class SpaceController extends Controller
             'notebooks' => [],
         ]);
 
+        $user = User::find($userId);
+
+        $user->push('spaces', [
+            'name' => $Space->name,
+            '_id' => new ObjectId($Space->_id)
+        ]);
+
         return response()->json($Space, 201);
     }
 
     public function show()
     {;
 
-        $userId = auth()->id();
+        $user = auth()->user();
 
-        if ($userId) {
-            $spaces = Space::where('author', new ObjectId($userId))->get();
-        } else {
-            $spaces = collect(); 
-        }
+        $spaces = $user->spaces;
 
-        $filteredSpaces = $spaces->map(function ($space) {
-            return [
-                'name' => $space->name,
-                'logo' => "This is the logo",
-                'plan' => "Author",
-                'spaceId' => $space->id,
-            ];
-        });
-        error_log($spaces);
-        return response()->json($filteredSpaces);
+        return response()->json($spaces);
+
+        // $userId = auth()->id();
+
+        // if ($userId) {
+        //     $spaces = Space::where('author', new ObjectId($userId))->get();
+        // } else {
+        //     $spaces = collect(); 
+        // }
+
+        // $filteredSpaces = $spaces->map(function ($space) {
+        //     return [
+        //         'name' => $space->name,
+        //         'logo' => "This is the logo",
+        //         'plan' => "Author",
+        //         'spaceId' => $space->id,
+        //     ];
+        // });
+
+        // return response()->json($filteredSpaces);
     }
 
     public function update(Request $request, $id)

@@ -71,6 +71,7 @@ export function SidebarComponent() {
         try {
             const response = await axios.get("/sidebar");
             setSpaces(response.data);
+            console.log(response.data)
         } catch (error) {
             console.error("Error:", error);
         }

@@ -16,6 +16,9 @@ export const Form = ({
 }: Props) => {
     return (
         <form className="project-form" onSubmit={onSubmit}>
+            <label>
+            {inputValue}
+            </label>
             <input
                 type="text"
                 name="name"

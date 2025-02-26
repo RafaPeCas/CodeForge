@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Space;
@@ -14,36 +15,60 @@ class SpaceController extends Controller
 
     public function store(Request $request)
     {
-         $name = $request->input("name");
-         $description = $request->input("description");
-         $userId = new objectId($request->user()->id);
-         $Space = Space::create([
-             'name' => $name,
-             'description' => $description,
-             'author' => $userId,
-             'members' => [],
-             'notebooks' => [],
-         ]);
+
+        $name = $request->input("spaceName");
+        $description = $request->input("spaceDescription");
+        $userId = new  ObjectId($request->user()->id);
+        $Space = Space::create([
+            'name' => $name,
+            'description' => $description,
+            'author' => $userId,
+            'members' => [],
+            'notebooks' => [],
+        ]);
+
         return response()->json($Space, 201);
     }
 
-    public function show($id)
-    {
-        $Space = Space::findOrFail($id);
-        return response()->json($Space);
+    public function show()
+    {;
+
+        $userId = auth()->id();
+
+        if ($userId) {
+            $spaces = Space::where('author', new ObjectId($userId))->get();
+        } else {
+            $spaces = collect(); // Colección vacía si el usuario no está autenticado
+        }
+        error_log($userId);
+        $filteredSpaces = $spaces->map(function ($space) {
+            return [
+                'name' => $space->name,
+                'logo' => "This is the logo", // Transformar el logo a una URL
+                'plan' => "This is the plan",
+            ];
+        });
+        error_log($spaces);
+        return response()->json($filteredSpaces);
     }
 
     public function update(Request $request, $id)
     {
-        $Space = Space::findOrFail($id);
-        $Space->update($request->all());
-        return response()->json($Space);
+        $space = Space::find($id);
+        $space->name = $request->spaceName;
+        $space->description = $request->spaceDescription;
+        $space->save();
+
+        return response()->json(["result" => "ok"], 201);
     }
+
+
 
     public function destroy($id)
     {
-        $Space = Space::findOrFail($id);
-        $Space->delete();
+        error_log("Eliminando espacio con ID: " . $id);
+        $space = Space::find($id);
+        $space->delete();
         return response()->json(null, 204);
     }
 }

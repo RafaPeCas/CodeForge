@@ -73,8 +73,14 @@ export function SidebarComponent() {
     const fetchSpaces = async () => {
         try {
             const response = await axios.get("/sidebar");
-            setSpaces(response.data);
-            console.log(response.data)
+            const transformedSpaces = response.data.map((space: any) => ({
+                name: space.name,
+                id: space.id.$oid, 
+                logo: "", 
+                plan: "Author",
+            }));
+
+            setSpaces(transformedSpaces); 
         } catch (error) {
             console.error("Error:", error);
         }
@@ -84,7 +90,7 @@ export function SidebarComponent() {
         try {
             const response = await axios.get(`notebooks/${spaceId}`);
             console.log(response.data);
-            
+
             setNotebooks(response.data);
         } catch (error) {
             console.error("Error:", error);
@@ -93,7 +99,7 @@ export function SidebarComponent() {
 
     useEffect(() => {
         fetchSpaces();
-        fetchNotebooks({spaceId:"67bf3553d2a75407fb08ecca"});
+        fetchNotebooks({ spaceId: "67bf3553d2a75407fb08ecca" });
     }, []);
 
     return (
@@ -137,31 +143,47 @@ export function SidebarComponent() {
                     </SidebarGroupContent>
                 </SidebarGroup>
                 <SidebarGroup>
-                <SidebarGroupLabel>Notebooks</SidebarGroupLabel>
+                    <SidebarGroupLabel>Notebooks</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {notebooks.map((notebook) => (
                                 <SidebarMenuItem key={notebook._id}>
-                                        <SidebarMenuButton asChild>
-                                            <span>{notebook.name}</span>
-                                        </SidebarMenuButton>
+                                    <SidebarMenuButton asChild>
+                                        <span>{notebook.name}</span>
+                                    </SidebarMenuButton>
                                     <SidebarMenuSub>
                                         {notebook.pages.map((page) => (
-                                            <SidebarMenuSubItem key={page.title}>
+                                            <SidebarMenuSubItem
+                                                key={page.title}
+                                            >
                                                 <SidebarMenuSubButton asChild>
                                                     <a href={`#${page.title}`}>
-                                                        <span>{page.title}</span>
+                                                        <span>
+                                                            {page.title}
+                                                        </span>
                                                     </a>
                                                 </SidebarMenuSubButton>
-                                                {page.subpages?.map((subpage) => (
-                                                    <SidebarMenuSubItem key={subpage.title}>
-                                                        <SidebarMenuSubButton asChild>
-                                                            <a href={`#${subpage.title}`}>
-                                                                <span>{subpage.title}</span>
-                                                            </a>
-                                                        </SidebarMenuSubButton>
-                                                    </SidebarMenuSubItem>
-                                                ))}
+                                                {page.subpages?.map(
+                                                    (subpage) => (
+                                                        <SidebarMenuSubItem
+                                                            key={subpage.title}
+                                                        >
+                                                            <SidebarMenuSubButton
+                                                                asChild
+                                                            >
+                                                                <a
+                                                                    href={`#${subpage.title}`}
+                                                                >
+                                                                    <span>
+                                                                        {
+                                                                            subpage.title
+                                                                        }
+                                                                    </span>
+                                                                </a>
+                                                            </SidebarMenuSubButton>
+                                                        </SidebarMenuSubItem>
+                                                    )
+                                                )}
                                             </SidebarMenuSubItem>
                                         ))}
                                     </SidebarMenuSub>
@@ -169,7 +191,6 @@ export function SidebarComponent() {
                             ))}
                         </SidebarMenu>
                     </SidebarGroupContent>
-
                 </SidebarGroup>
             </SidebarContent>
             {/* <SidebarFooter>

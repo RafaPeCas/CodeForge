@@ -46,6 +46,7 @@ class SpaceController extends Controller
                 'name' => $space->name,
                 'logo' => "This is the logo", // Transformar el logo a una URL
                 'plan' => "This is the plan",
+                'spaceId' => $space->id,
             ];
         });
         error_log($spaces);

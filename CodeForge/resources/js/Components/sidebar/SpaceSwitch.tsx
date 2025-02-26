@@ -1,7 +1,5 @@
 import { useState } from "react";
-
 import { ChevronsUpDown, Plus } from "lucide-react";
-
 import {
     SidebarMenu,
     SidebarMenuButton,
@@ -17,33 +15,7 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/Components/ui/dialog";
-
-import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/Components/ui/form";
-
-import { Button } from "@/Components";
-
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import axios from "axios";
-import { Textarea } from "@/Components/ui/textarea";
-import { Input } from "@/Components/ui/input";
+import { CreateSpaceDialog } from "./CreateSpaceDialog"; // Importa el nuevo componente
 
 export function SpaceSwitch({
     spaces,
@@ -54,32 +26,12 @@ export function SpaceSwitch({
         plan: string;
     }[];
 }) {
-
-    const [error, setError] = useState<string | null>(null);
-    const createSpaceSchema = z.object({
-        spaceName: z.string().min(2).max(50),
-        spaceDescription: z.string().min(0).max(255),
-    });
-
-    const createSpaceForm = useForm<z.infer<typeof createSpaceSchema>>({
-        resolver: zodResolver(createSpaceSchema),
-        defaultValues: { spaceName: "", spaceDescription: "" },
-    });
-
-    const createOnSubmit = async (data: z.infer<typeof createSpaceSchema>) => {
-        setError(null);
-        try {
-            await axios.post("/space", data);
-            createSpaceForm.reset();
-        } catch (error) {
-            setError("Error en la base de datos");
-        }
-    };
-
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
     const { isMobile } = useSidebar();
     const [activeSpace, setActiveSpace] = useState(spaces[0]);
+
     return (
-        <Dialog>
+        <>
             <SidebarMenu>
                 <SidebarMenuItem>
                     <DropdownMenu>
@@ -123,84 +75,25 @@ export function SpaceSwitch({
                                 </DropdownMenuItem>
                             ))}
                             <DropdownMenuSeparator />
-                            <DialogTrigger asChild>
-                                <DropdownMenuItem className="gap-2 p-2">
-                                    <div className="flex size-6 items-center justify-center rounded-md border bg-background">
-                                        <Plus className="size-4" />
-                                    </div>
-
-                                    <div className="font-medium text-muted-foreground">
-                                        Add space
-                                    </div>
-                                </DropdownMenuItem>
-                            </DialogTrigger>
+                            <DropdownMenuItem
+                                className="gap-2 p-2"
+                                onClick={() => setIsDialogOpen(true)}
+                            >
+                                <div className="flex size-6 items-center justify-center rounded-md border bg-background">
+                                    <Plus className="size-4" />
+                                </div>
+                                <div className="font-medium text-muted-foreground">
+                                    Add space
+                                </div>
+                            </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </SidebarMenuItem>
             </SidebarMenu>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>Create new Space</DialogTitle>
-                    <DialogDescription>
-                        <Form {...createSpaceForm}>
-                            <form
-                                onSubmit={createSpaceForm.handleSubmit(
-                                    createOnSubmit
-                                )}
-                                className="space-y-8"
-                            >
-                                <FormField
-                                    control={createSpaceForm.control}
-                                    name="spaceName"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel className="text-black">
-                                                Space Name
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder="Type the space name here"
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormDescription>
-                                                This will be the space name
-                                            </FormDescription>
-                                            <FormMessage className="text-black" />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={createSpaceForm.control}
-                                    name="spaceDescription"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel className="text-black">
-                                                Space Description
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Textarea
-                                                    placeholder="Type the space description here"
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormDescription>
-                                                This will be the space
-                                                description
-                                            </FormDescription>
-                                            <FormMessage className="text-black" />
-                                        </FormItem>
-                                    )}
-                                />
-                                {error && (
-                                    <p className="text-red-500">{error}</p>
-                                )}{" "}
-                                <Button type="submit">Submit</Button>
-                            </form>
-                        </Form>
-                    </DialogDescription>
-                </DialogHeader>
-            </DialogContent>
-        </Dialog>
+            <CreateSpaceDialog
+                isOpen={isDialogOpen}
+                onClose={() => setIsDialogOpen(false)}
+            />
+        </>
     );
 }

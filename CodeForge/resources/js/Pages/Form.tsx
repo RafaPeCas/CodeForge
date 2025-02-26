@@ -110,11 +110,7 @@ export default function SpaceForm() {
 
     return (
         <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Crear Espacio
-                </h2>
-            }
+            header="Crear Espacio"
         >
             {error && (
                 <Alert

@@ -23,7 +23,6 @@ return new class extends Migration
             $collection->timestamps();
             $collection->objectId('author'); // ID of the user who created the page
             $collection->objectId('parentPage')->nullable(); // Optional reference to the parent page
-            $collection->array('subpages')->nullable(); // List of references to subpages
             $collection->number('version'); // Current version number of the page
             $collection->embedsMany('history', function (Blueprint $embeddedCollection) {
                 $embeddedCollection->number('version'); // Version number

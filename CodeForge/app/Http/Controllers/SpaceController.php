@@ -82,7 +82,6 @@ class SpaceController extends Controller
 
     public function destroy($id)
     {
-        error_log("Eliminando espacio con ID: " . $id);
         $space = Space::find($id);
         $space->delete();
         return response()->json(null, 204);

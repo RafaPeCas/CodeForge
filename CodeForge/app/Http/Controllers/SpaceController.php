@@ -40,7 +40,6 @@ class SpaceController extends Controller
         } else {
             $spaces = collect(); // Colección vacía si el usuario no está autenticado
         }
-        error_log($userId);
         $filteredSpaces = $spaces->map(function ($space) {
             return [
                 'name' => $space->name,
@@ -48,7 +47,6 @@ class SpaceController extends Controller
                 'plan' => "This is the plan",
             ];
         });
-        error_log($spaces);
         return response()->json($filteredSpaces);
     }
 
@@ -66,7 +64,6 @@ class SpaceController extends Controller
 
     public function destroy($id)
     {
-        error_log("Eliminando espacio con ID: " . $id);
         $space = Space::find($id);
         $space->delete();
         return response()->json(null, 204);

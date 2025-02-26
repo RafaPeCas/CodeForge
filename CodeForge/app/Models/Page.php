@@ -7,22 +7,16 @@ use MongoDB\BSON\ObjectId;
 
 class Page extends Model
 {
-    protected $collection = 'pages'; // MongoDB collection name
+    protected $collection = 'pages';
     protected $fillable = [
         'title',
         'blocks',
         'notebookId',
         'author',
         'parentPage',
-        'subpages',
         'version',
         'history',
     ];
-
-    public function addSubpage(Page $subpage)
-    {
-        $this->push('subpages', new ObjectId($subpage->_id));
-    }
 
     /**
      * $page->addVersion([

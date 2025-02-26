@@ -4,7 +4,7 @@ import { Head } from "@inertiajs/react";
 export default function Dashboard() {
 
     return (
-        <AuthenticatedLayout>
+        <AuthenticatedLayout header = { "Dashboard" }>
             <Head title="Dashboard" />
 
             <div className="py-12">

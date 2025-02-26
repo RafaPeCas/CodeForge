@@ -36,22 +36,11 @@ class SpacesCollectionSeeder extends Seeder
             'createdAt' => now(),
             'updatedAt' => now(),
         ]);
-
+        // Add the space to the user's spaces array
+        $user->addSpace($space);
+        $user->save();
         // Add the user as a member of the space
         $space->addMember($user, 'admin');
-        $space->save();
-
-        // Create a notebook and associate it with the space
-        $notebook = Notebook::create([
-            'name' => 'Test Notebook',
-            'description' => 'This is a test notebook.',
-            'spaceId' => new ObjectId($space->_id),
-            'createdAt' => now(),
-            'updatedAt' => now(),
-        ]);
-
-        // Add the notebook to the space's notebooks array
-        $space->addNotebook($notebook);
         $space->save();
         
     }

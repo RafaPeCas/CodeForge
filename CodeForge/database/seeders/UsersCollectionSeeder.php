@@ -25,17 +25,6 @@ class UsersCollectionSeeder extends Seeder
             'password' => bcrypt('password'),
         ]);
 
-        // Create a space and associate it with the user
-        $space = Space::create([
-            'name' => 'Test Space',
-            'description' => 'This is a test space.',
-            'author' => new ObjectId($user->_id),
-            'createdAt' => now(),
-            'updatedAt' => now(),
-        ]);
-
-        // Add the space to the user's spaces array
-        $user->addSpace($space);
         $user->save();
     }
 }

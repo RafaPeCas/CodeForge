@@ -194,7 +194,7 @@ export function SpaceSwitch({
                                 />
                                 {error && (
                                     <p className="text-red-500">{error}</p>
-                                )}{" "}
+                                )}
                                 <Button type="submit">Submit</Button>
                             </form>
                         </Form>

@@ -1,6 +1,5 @@
 import {
     AudioWaveform,
-    Command,
     DoorOpen,
     Edit,
     FormInputIcon,
@@ -19,6 +18,9 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    SidebarMenuSub,
+    SidebarMenuSubButton,
+    SidebarMenuSubItem,
     SidebarRail,
 } from "@/Components/ui/sidebar";
 
@@ -59,6 +61,7 @@ const items = [
 ];
 
 interface Space {
+    id?: string;
     name: string;
     logo: string; // Cambiado a string porque el logo vendrá como URL o nombre de archivo
     plan: string;
@@ -76,13 +79,20 @@ const data = {
             logo: AudioWaveform,
             plan: "Startup",
         },
-        {
-            name: "Evil Corp.",
-            logo: Command,
-            plan: "Free",
-        },
     ],
 };
+
+interface Page {
+    _id: string;
+    title: string;
+    subpages?: Page[];
+}
+
+interface Notebook {
+    _id: string;
+    name: string;
+    pages: Page[];
+}
 
 export function SidebarComponent() {
     const [spaces, setSpaces] = useState([
@@ -92,6 +102,7 @@ export function SidebarComponent() {
             plan: "Cargando...",
         },
     ]);
+    const [notebooks, setNotebooks] = useState<Notebook[]>([]);
 
     const fetchSpaces = async () => {
         try {
@@ -101,8 +112,20 @@ export function SidebarComponent() {
             console.error("Error:", error);
         }
     };
+
+    const fetchNotebooks = async ({ spaceId }: { spaceId: String }) => {
+        try {
+            const response = await axios.get(`notebooks/${spaceId}`);
+            console.log(response.data);
+            
+            setNotebooks(response.data);
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    };
     useEffect(() => {
         fetchSpaces();
+        fetchNotebooks({spaceId:"67bf3553d2a75407fb08ecca"});
     }, []);
 
     return (
@@ -145,11 +168,46 @@ export function SidebarComponent() {
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
+                <SidebarGroup>
+                <SidebarGroupLabel>Notebooks</SidebarGroupLabel>
+                    <SidebarGroupContent>
+                        <SidebarMenu>
+                            {notebooks.map((notebook) => (
+                                <SidebarMenuItem key={notebook._id}>
+                                        <SidebarMenuButton asChild>
+                                            <span>{notebook.name}</span>
+                                        </SidebarMenuButton>
+                                    <SidebarMenuSub>
+                                        {notebook.pages.map((page) => (
+                                            <SidebarMenuSubItem key={page.title}>
+                                                <SidebarMenuSubButton asChild>
+                                                    <a href={`#${page.title}`}>
+                                                        <span>{page.title}</span>
+                                                    </a>
+                                                </SidebarMenuSubButton>
+                                                {page.subpages?.map((subpage) => (
+                                                    <SidebarMenuSubItem key={subpage.title}>
+                                                        <SidebarMenuSubButton asChild>
+                                                            <a href={`#${subpage.title}`}>
+                                                                <span>{subpage.title}</span>
+                                                            </a>
+                                                        </SidebarMenuSubButton>
+                                                    </SidebarMenuSubItem>
+                                                ))}
+                                            </SidebarMenuSubItem>
+                                        ))}
+                                    </SidebarMenuSub>
+                                </SidebarMenuItem>
+                            ))}
+                        </SidebarMenu>
+                    </SidebarGroupContent>
+
+                </SidebarGroup>
             </SidebarContent>
             {/* <SidebarFooter>
                 <SpaceSwitch /> 
             </SidebarFooter> */}
-            
+
             <SidebarRail />
         </Sidebar>
     );

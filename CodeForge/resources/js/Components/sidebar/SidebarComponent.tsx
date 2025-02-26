@@ -91,16 +91,6 @@ export function SidebarComponent() {
         }
     };
 
-    const fetchNotebooks = async ({ spaceId }: { spaceId: String }) => {
-        try {
-            const response = await axios.get(`notebooks/${spaceId}`);
-            console.log(response.data);
-            
-            setNotebooks(response.data);
-        } catch (error) {
-            console.error("Error:", error);
-        }
-    };
     useEffect(() => {
         fetchSpaces();
         fetchNotebooks({spaceId:"67bf3553d2a75407fb08ecca"});

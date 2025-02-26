@@ -20,13 +20,13 @@ import { Button } from "@/Components";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import axios from "axios";
 import { Textarea } from "@/Components/ui/textarea";
 import { Input } from "@/Components/ui/input";
 
 interface CreateSpaceDialogProps {
     isOpen: boolean;
     onClose: () => void;
+    onSubmit: (data: z.infer<typeof createSpaceSchema>) => void;
 }
 
 const createSpaceSchema = z.object({
@@ -34,7 +34,7 @@ const createSpaceSchema = z.object({
     spaceDescription: z.string().min(0).max(255),
 });
 
-export function CreateSpaceDialog({ isOpen, onClose }: CreateSpaceDialogProps) {
+export function CreateSpaceDialog({ isOpen, onClose, onSubmit }: CreateSpaceDialogProps) {
     const [error, setError] = useState<string | null>(null);
 
     const createSpaceForm = useForm<z.infer<typeof createSpaceSchema>>({
@@ -42,12 +42,10 @@ export function CreateSpaceDialog({ isOpen, onClose }: CreateSpaceDialogProps) {
         defaultValues: { spaceName: "", spaceDescription: "" },
     });
 
-    const createOnSubmit = async (data: z.infer<typeof createSpaceSchema>) => {
+    const handleSubmit = async (data: z.infer<typeof createSpaceSchema>) => {
         setError(null);
         try {
-            await axios.post("/space", data);
-            createSpaceForm.reset();
-            onClose(); // Cierra el diálogo después de enviar
+            await onSubmit(data);
         } catch (error) {
             setError("Error en la base de datos");
         }
@@ -61,7 +59,7 @@ export function CreateSpaceDialog({ isOpen, onClose }: CreateSpaceDialogProps) {
                     <DialogDescription>
                         <Form {...createSpaceForm}>
                             <form
-                                onSubmit={createSpaceForm.handleSubmit(createOnSubmit)}
+                                onSubmit={createSpaceForm.handleSubmit(handleSubmit)}
                                 className="space-y-8"
                             >
                                 <FormField

@@ -16,19 +16,47 @@ import {
     DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { CreateSpaceDialog } from "./CreateSpaceDialog"; // Importa el nuevo componente
+import axios from "axios";
+import { z } from "zod";
 
-export function SpaceSwitch({
-    spaces,
-}: {
-    spaces: {
-        name: string;
-        logo: string;
-        plan: string;
-    }[];
-}) {
+interface Space {
+    name: string;
+    logo: string; 
+    plan: string;
+}
+
+interface SpaceSwitchProps {
+    spaces: Space[];
+    onSpaceCreated: () => void; 
+}
+
+const createSpaceSchema = z.object({
+    spaceName: z.string().min(2).max(50),
+    spaceDescription: z.string().min(0).max(255),
+});
+
+export function SpaceSwitch({ spaces, onSpaceCreated }: SpaceSwitchProps)  {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const { isMobile } = useSidebar();
     const [activeSpace, setActiveSpace] = useState(spaces[0]);
+    const [error, setError] = useState<string | null>(null);
+
+    const createOnSubmit = async (data: z.infer<typeof createSpaceSchema>) => {
+        setError(null);
+        try {
+            const response = await axios.post("/space", data);
+            onSpaceCreated();
+            const newSpace = {
+                name: data.spaceName,
+                logo: "", 
+                plan: "Author",
+            };
+            setActiveSpace(newSpace); 
+            setIsDialogOpen(false); 
+        } catch (error) {
+            setError("Error en la base de datos");
+        }
+    };
 
     return (
         <>
@@ -93,7 +121,12 @@ export function SpaceSwitch({
             <CreateSpaceDialog
                 isOpen={isDialogOpen}
                 onClose={() => setIsDialogOpen(false)}
+                onSubmit={createOnSubmit}
             />
         </>
     );
+}
+
+function setError(arg0: null) {
+    throw new Error("Function not implemented.");
 }

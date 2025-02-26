@@ -38,14 +38,14 @@ class SpaceController extends Controller
         if ($userId) {
             $spaces = Space::where('author', new ObjectId($userId))->get();
         } else {
-            $spaces = collect(); // Colección vacía si el usuario no está autenticado
+            $spaces = collect(); 
         }
-        error_log($userId);
+
         $filteredSpaces = $spaces->map(function ($space) {
             return [
                 'name' => $space->name,
-                'logo' => "This is the logo", // Transformar el logo a una URL
-                'plan' => "This is the plan",
+                'logo' => "This is the logo",
+                'plan' => "Author",
                 'spaceId' => $space->id,
             ];
         });

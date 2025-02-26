@@ -58,32 +58,6 @@ const items = [
     },
 ];
 
-interface Space {
-    name: string;
-    logo: string; // Cambiado a string porque el logo vendrá como URL o nombre de archivo
-    plan: string;
-}
-
-const data = {
-    spaces: [
-        {
-            name: "Acme Inc",
-            logo: GalleryVerticalEnd,
-            plan: "Enterprise",
-        },
-        {
-            name: "Acme Corp.",
-            logo: AudioWaveform,
-            plan: "Startup",
-        },
-        {
-            name: "Evil Corp.",
-            logo: Command,
-            plan: "Free",
-        },
-    ],
-};
-
 export function SidebarComponent() {
     const [spaces, setSpaces] = useState([
         {
@@ -108,7 +82,7 @@ export function SidebarComponent() {
     return (
         <Sidebar collapsible="icon">
             <SidebarHeader>
-                <SpaceSwitch spaces={spaces} />
+                <SpaceSwitch spaces={spaces} onSpaceCreated={fetchSpaces} />
             </SidebarHeader>
             <SidebarContent>
                 <SidebarGroup>

@@ -1,7 +1,9 @@
 import {
     AudioWaveform,
+    ChevronRight,
     DoorOpen,
     Edit,
+    Folder,
     FormInputIcon,
     GalleryVerticalEnd,
     Home,
@@ -19,8 +21,6 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
     SidebarMenuSub,
-    SidebarMenuSubButton,
-    SidebarMenuSubItem,
     SidebarRail,
 } from "@/Components/ui/sidebar";
 
@@ -28,6 +28,12 @@ import { SpaceSwitch } from "@/Components/sidebar/SpaceSwitch";
 import { Link } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from "../ui/collapsible";
+import SidebarNotebooks from "./SidebarNotebooks";
 
 // Menu items.
 const items = [
@@ -59,6 +65,44 @@ const items = [
         as: "button",
     },
 ];
+
+interface Space {
+    id?: string;
+    name: string;
+    logo: string; // Cambiado a string porque el logo vendrá como URL o nombre de archivo
+    plan: string;
+}
+
+const data = {
+    spaces: [
+        {
+            name: "Acme Inc",
+            logo: GalleryVerticalEnd,
+            plan: "Enterprise",
+        },
+        {
+            name: "Acme Corp.",
+            logo: AudioWaveform,
+            plan: "Startup",
+        },
+    ],
+};
+
+interface Page {
+    id: { $oid: string };
+    title: string;
+    subPages: Page[];
+}
+
+interface Notebook {
+    id: string;
+    name: string;
+    description: string;
+    spaceId: string;
+    pages: Page[];
+    updated_at: string;
+    created_at: string;
+}
 
 export function SidebarComponent() {
     const [spaces, setSpaces] = useState([
@@ -163,49 +207,7 @@ export function SidebarComponent() {
                     <SidebarGroupLabel>Notebooks</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            {notebooks.map((notebook) => (
-                                <SidebarMenuItem key={notebook._id}>
-                                    <SidebarMenuButton asChild>
-                                        <span>{notebook.name}</span>
-                                    </SidebarMenuButton>
-                                    <SidebarMenuSub>
-                                        {notebook.pages.map((page) => (
-                                            <SidebarMenuSubItem
-                                                key={page.title}
-                                            >
-                                                <SidebarMenuSubButton asChild>
-                                                    <a href={`#${page.title}`}>
-                                                        <span>
-                                                            {page.title}
-                                                        </span>
-                                                    </a>
-                                                </SidebarMenuSubButton>
-                                                {page.subpages?.map(
-                                                    (subpage) => (
-                                                        <SidebarMenuSubItem
-                                                            key={subpage.title}
-                                                        >
-                                                            <SidebarMenuSubButton
-                                                                asChild
-                                                            >
-                                                                <a
-                                                                    href={`#${subpage.title}`}
-                                                                >
-                                                                    <span>
-                                                                        {
-                                                                            subpage.title
-                                                                        }
-                                                                    </span>
-                                                                </a>
-                                                            </SidebarMenuSubButton>
-                                                        </SidebarMenuSubItem>
-                                                    )
-                                                )}
-                                            </SidebarMenuSubItem>
-                                        ))}
-                                    </SidebarMenuSub>
-                                </SidebarMenuItem>
-                            ))}
+                            <SidebarNotebooks notebooks={notebooks}/>
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>

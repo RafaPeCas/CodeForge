@@ -1,7 +1,9 @@
 import {
     AudioWaveform,
+    ChevronRight,
     DoorOpen,
     Edit,
+    Folder,
     FormInputIcon,
     GalleryVerticalEnd,
     Home,
@@ -19,8 +21,6 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
     SidebarMenuSub,
-    SidebarMenuSubButton,
-    SidebarMenuSubItem,
     SidebarRail,
 } from "@/Components/ui/sidebar";
 
@@ -28,6 +28,12 @@ import { SpaceSwitch } from "@/Components/sidebar/SpaceSwitch";
 import { Link } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from "../ui/collapsible";
+import SidebarNotebooks from "./SidebarNotebooks";
 
 // Menu items.
 const items = [
@@ -83,15 +89,19 @@ const data = {
 };
 
 interface Page {
-    _id: string;
+    id: { $oid: string };
     title: string;
-    subpages?: Page[];
+    subPages: Page[];
 }
 
 interface Notebook {
-    _id: string;
+    id: string;
     name: string;
+    description: string;
+    spaceId: string;
     pages: Page[];
+    updated_at: string;
+    created_at: string;
 }
 
 export function SidebarComponent() {
@@ -116,8 +126,8 @@ export function SidebarComponent() {
     const fetchNotebooks = async ({ spaceId }: { spaceId: String }) => {
         try {
             const response = await axios.get(`notebooks/${spaceId}`);
-            console.log(response.data);
-            
+            console.log("response", response.data);
+
             setNotebooks(response.data);
         } catch (error) {
             console.error("Error:", error);
@@ -125,7 +135,7 @@ export function SidebarComponent() {
     };
     useEffect(() => {
         fetchSpaces();
-        fetchNotebooks({spaceId:"67bf3553d2a75407fb08ecca"});
+        fetchNotebooks({ spaceId: "67bf3553d2a75407fb08ecca" });
     }, []);
 
     return (
@@ -169,39 +179,12 @@ export function SidebarComponent() {
                     </SidebarGroupContent>
                 </SidebarGroup>
                 <SidebarGroup>
-                <SidebarGroupLabel>Notebooks</SidebarGroupLabel>
+                    <SidebarGroupLabel>Notebooks</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            {notebooks.map((notebook) => (
-                                <SidebarMenuItem key={notebook._id}>
-                                        <SidebarMenuButton asChild>
-                                            <span>{notebook.name}</span>
-                                        </SidebarMenuButton>
-                                    <SidebarMenuSub>
-                                        {notebook.pages.map((page) => (
-                                            <SidebarMenuSubItem key={page.title}>
-                                                <SidebarMenuSubButton asChild>
-                                                    <a href={`#${page.title}`}>
-                                                        <span>{page.title}</span>
-                                                    </a>
-                                                </SidebarMenuSubButton>
-                                                {page.subpages?.map((subpage) => (
-                                                    <SidebarMenuSubItem key={subpage.title}>
-                                                        <SidebarMenuSubButton asChild>
-                                                            <a href={`#${subpage.title}`}>
-                                                                <span>{subpage.title}</span>
-                                                            </a>
-                                                        </SidebarMenuSubButton>
-                                                    </SidebarMenuSubItem>
-                                                ))}
-                                            </SidebarMenuSubItem>
-                                        ))}
-                                    </SidebarMenuSub>
-                                </SidebarMenuItem>
-                            ))}
+                            <SidebarNotebooks notebooks={notebooks}/>
                         </SidebarMenu>
                     </SidebarGroupContent>
-
                 </SidebarGroup>
             </SidebarContent>
             {/* <SidebarFooter>

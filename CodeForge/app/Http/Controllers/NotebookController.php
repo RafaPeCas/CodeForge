@@ -39,7 +39,6 @@ class NotebookController extends Controller
     {
         $spaceId = new ObjectId($spaceId);
         $notebooks = Notebook::where('spaceId', $spaceId)->get();
-        error_log($notebooks);
         return response()->json($notebooks);
     }
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronsUpDown, Plus } from "lucide-react";
 import {
     SidebarMenu,
@@ -21,13 +21,15 @@ import { z } from "zod";
 
 interface Space {
     name: string;
-    logo: string; 
+    logo: string;
     plan: string;
+    id: string;
 }
 
 interface SpaceSwitchProps {
     spaces: Space[];
-    onSpaceCreated: () => void; 
+    onSpaceCreated: () => void;
+    onSpaceChanged: () => void;
 }
 
 const createSpaceSchema = z.object({
@@ -35,11 +37,21 @@ const createSpaceSchema = z.object({
     spaceDescription: z.string().min(0).max(255),
 });
 
-export function SpaceSwitch({ spaces, onSpaceCreated }: SpaceSwitchProps)  {
+export function SpaceSwitch({ spaces, onSpaceCreated, onSpaceChanged }: SpaceSwitchProps) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const { isMobile } = useSidebar();
-    const [activeSpace, setActiveSpace] = useState(spaces[0]);
+    const [activeSpace, setActiveSpace] = useState<Space | null>(null);
     const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const savedSpace = localStorage.getItem("activeSpace");
+        if (savedSpace) {
+            setActiveSpace(JSON.parse(savedSpace));
+        } else if (spaces.length > 0) {
+            setActiveSpace(spaces[0]);
+            onSpaceChanged();
+        }
+    }, [spaces]);
 
     const createOnSubmit = async (data: z.infer<typeof createSpaceSchema>) => {
         setError(null);
@@ -47,15 +59,22 @@ export function SpaceSwitch({ spaces, onSpaceCreated }: SpaceSwitchProps)  {
             const response = await axios.post("/space", data);
             onSpaceCreated();
             const newSpace = {
-                name: data.spaceName,
-                logo: "", 
-                plan: "Author",
+                name: response.data.name,
+                logo: "",
+                plan: "author",
+                id: response.data.id,
             };
-            setActiveSpace(newSpace); 
-            setIsDialogOpen(false); 
+            handleSpaceChange(newSpace);
+            setIsDialogOpen(false);
         } catch (error) {
             setError("Error en la base de datos");
         }
+    };
+
+    const handleSpaceChange = (space: Space) => {
+        setActiveSpace(space);
+        localStorage.setItem("activeSpace", JSON.stringify(space));
+        onSpaceChanged();
     };
 
     return (
@@ -71,10 +90,10 @@ export function SpaceSwitch({ spaces, onSpaceCreated }: SpaceSwitchProps)  {
                                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground"></div>
                                 <div className="grid flex-1 text-left text-sm leading-tight">
                                     <span className="truncate font-semibold">
-                                        {activeSpace.name}
+                                        {activeSpace?.name || "Loading..."}
                                     </span>
                                     <span className="truncate text-xs">
-                                        {activeSpace.plan}
+                                        {activeSpace?.plan || ""}
                                     </span>
                                 </div>
                                 <ChevronsUpDown className="ml-auto" />
@@ -92,7 +111,7 @@ export function SpaceSwitch({ spaces, onSpaceCreated }: SpaceSwitchProps)  {
                             {spaces.map((space, index) => (
                                 <DropdownMenuItem
                                     key={space.name}
-                                    onClick={() => setActiveSpace(space)}
+                                    onClick={() => handleSpaceChange(space)}
                                     className="gap-2 p-2"
                                 >
                                     <div className="flex size-6 items-center justify-center rounded-sm border"></div>

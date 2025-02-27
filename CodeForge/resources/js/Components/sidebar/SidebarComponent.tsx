@@ -66,6 +66,7 @@ export function SidebarComponent() {
             name: "Cargando...",
             logo: "DefaultLogo",
             plan: "Cargando...",
+            id: "",
         },
     ]);
     const [notebooks, setNotebooks] = useState<Notebook[]>([]);
@@ -75,21 +76,27 @@ export function SidebarComponent() {
             const response = await axios.get("/sidebar");
             const transformedSpaces = response.data.map((space: any) => ({
                 name: space.name,
-                id: space.id.$oid, 
-                logo: "", 
+                id: space.id.$oid,
+                logo: "",
                 plan: "Author",
             }));
 
-            setSpaces(transformedSpaces); 
+            setSpaces(transformedSpaces);
         } catch (error) {
             console.error("Error:", error);
         }
     };
 
-    const fetchNotebooks = async ({ spaceId }: { spaceId: String }) => {
+    const fetchNotebooks = async () => {
+        const savedSpace = localStorage.getItem("activeSpace");
+        let spaceId;
+        if (savedSpace) {
+            spaceId = JSON.parse(savedSpace).id;
+        } else if (spaces.length > 0) {
+            spaceId = spaces[0].id;
+        }
         try {
             const response = await axios.get(`notebooks/${spaceId}`);
-            console.log(response.data);
 
             setNotebooks(response.data);
         } catch (error) {
@@ -99,13 +106,22 @@ export function SidebarComponent() {
 
     useEffect(() => {
         fetchSpaces();
-        fetchNotebooks({ spaceId: "67bf3553d2a75407fb08ecca" });
+        fetchNotebooks();
     }, []);
+
+    const handleLogout = () => {
+        console.log("Cerrando sesión...");
+        localStorage.removeItem("activeSpace");
+    };
 
     return (
         <Sidebar collapsible="icon">
             <SidebarHeader>
-                <SpaceSwitch spaces={spaces} onSpaceCreated={fetchSpaces} />
+                <SpaceSwitch
+                    spaces={spaces}
+                    onSpaceCreated={fetchSpaces}
+                    onSpaceChanged={fetchNotebooks}
+                />
             </SidebarHeader>
             <SidebarContent>
                 <SidebarGroup>
@@ -117,6 +133,7 @@ export function SidebarComponent() {
                                     <SidebarMenuButton asChild>
                                         {item.method ? (
                                             <Link
+                                                onClick={handleLogout}
                                                 href={route(item.route)}
                                                 method={
                                                     item.method as

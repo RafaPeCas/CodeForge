@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Notebook;
 use App\Models\Space;
+use App\Models\Page;
 use Illuminate\Http\Request;
 use MongoDB\BSON\ObjectId;
 
@@ -17,17 +18,16 @@ class NotebookController extends Controller
             'spaceId'     => 'required|exists:spaces,_id',
         ]);
 
-        $request->spaceId = new ObjectId($request->spaceId);
+        $spaceId = new ObjectId($request->spaceId);
 
         $notebook = Notebook::create([
             'name'        => $request->name,
             'description' => $request->description,
             'spaceId'     => $request->spaceId,
-            'pages'       => [],
         ]);
 
         // Add the notebook to the space
-        $space = Space::find($request->spaceId);
+        $space = Space::find($spaceId);
         $space->addNotebook($notebook);
         $space->save();
 
@@ -39,6 +39,17 @@ class NotebookController extends Controller
     {
         $spaceId = new ObjectId($spaceId);
         $notebooks = Notebook::where('spaceId', $spaceId)->get();
+        $notebooksWithPages = $notebooks->map(function ($notebook) {
+            $notebookId = new ObjectId($notebook->_id);
+            // Fetch pages for the current notebook (only current versions)
+            $pages = Page::where('notebookId', $notebookId)
+                ->where('isCurrent', true)
+                ->get(['_id', 'title', 'parentId', 'ancestors']);
+            // Add pages to the notebook object
+            $notebook->pages = $pages;
+    
+            return $notebook;
+        });
         return response()->json($notebooks);
     }
 
@@ -56,7 +67,6 @@ class NotebookController extends Controller
             'name'        => 'sometimes|string|max:255',
             'description' => 'sometimes|nullable|string',
             'spaceId'     => 'sometimes|exists:spaces,_id',
-            'pages'       => 'nullable|array',
         ]);
 
         $notebook = Notebook::findOrFail($id);
@@ -71,12 +81,6 @@ class NotebookController extends Controller
 
         if ($request->has('spaceId')) {
             $notebook->spaceId = new ObjectId($request->spaceId);
-        }
-
-        if ($request->has('pages')) {
-            $notebook->pages = array_map(function ($pageId) {
-                return new ObjectId($pageId);
-            }, $request->pages);
         }
 
         $notebook->save();

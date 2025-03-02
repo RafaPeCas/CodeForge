@@ -1,11 +1,7 @@
 import {
-    AudioWaveform,
-    ChevronRight,
     DoorOpen,
     Edit,
-    Folder,
     FormInputIcon,
-    GalleryVerticalEnd,
     Home,
     PanelLeftIcon,
 } from "lucide-react";
@@ -20,7 +16,6 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-    SidebarMenuSub,
     SidebarRail,
 } from "@/Components/ui/sidebar";
 
@@ -28,12 +23,9 @@ import { SpaceSwitch } from "@/Components/sidebar/SpaceSwitch";
 import { Link } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import {
-    Collapsible,
-    CollapsibleContent,
-    CollapsibleTrigger,
-} from "../ui/collapsible";
 import SidebarNotebooks from "./SidebarNotebooks";
+import { Notebook, NotebookWithHierarchy, Page, RawPage } from "@/types";
+import { on } from "events";
 
 // Menu items.
 const items = [
@@ -66,44 +58,6 @@ const items = [
     },
 ];
 
-interface Space {
-    id?: string;
-    name: string;
-    logo: string; // Cambiado a string porque el logo vendrá como URL o nombre de archivo
-    plan: string;
-}
-
-const data = {
-    spaces: [
-        {
-            name: "Acme Inc",
-            logo: GalleryVerticalEnd,
-            plan: "Enterprise",
-        },
-        {
-            name: "Acme Corp.",
-            logo: AudioWaveform,
-            plan: "Startup",
-        },
-    ],
-};
-
-interface Page {
-    id: { $oid: string };
-    title: string;
-    subPages: Page[];
-}
-
-interface Notebook {
-    id: string;
-    name: string;
-    description: string;
-    spaceId: string;
-    pages: Page[];
-    updated_at: string;
-    created_at: string;
-}
-
 export function SidebarComponent() {
     const [spaces, setSpaces] = useState([
         {
@@ -113,7 +67,7 @@ export function SidebarComponent() {
             id: "",
         },
     ]);
-    const [notebooks, setNotebooks] = useState<Notebook[]>([]);
+    const [notebooks, setNotebooks] = useState<NotebookWithHierarchy[]>([]);
 
     const fetchSpaces = async () => {
         try {
@@ -131,21 +85,84 @@ export function SidebarComponent() {
         }
     };
 
-    const fetchNotebooks = async () => {
+    // Normalize ancestors
+    const normalizeAncestors = (pages: RawPage[]): Page[] => {
+        return pages.map((page) => ({
+            ...page,
+            ancestors: page.ancestors.map((ancestor) => ancestor.$oid), // Convert ancestors to string[]
+            subPages: page.subPages
+                ? normalizeAncestors(page.subPages)
+                : undefined, // Recursively normalize subPages
+        }));
+    };
+
+    // Fetch notebooks and build hierarchy
+    const fetchNotebooks = async (): Promise<void> => {
         const savedSpace = localStorage.getItem("activeSpace");
-        let spaceId;
+        let spaceId: string;
+
         if (savedSpace) {
             spaceId = JSON.parse(savedSpace).id;
         } else if (spaces.length > 0) {
             spaceId = spaces[0].id;
+        } else {
+            console.error("No space ID available");
+            return;
         }
-        try {
-            const response = await axios.get(`notebooks/${spaceId}`);
 
-            setNotebooks(response.data);
+        try {
+            // Fetch notebooks and their pages from the backend
+            const response = await axios.get<Notebook[]>(
+                `notebooks/${spaceId}`
+            );
+            const notebooksWithPages = response.data;
+
+            // Build the hierarchical structure for each notebook's pages
+            const notebooksWithHierarchy: NotebookWithHierarchy[] =
+                notebooksWithPages.map((notebook) => {
+                    const normalizedPages = normalizeAncestors(notebook.pages); // Normalize ancestors
+                    return {
+                        ...notebook,
+                        pages: buildHierarchy(normalizedPages), // Build hierarchy with normalized pages
+                    };
+                });
+
+            console.log(notebooksWithHierarchy);
+            setNotebooks(notebooksWithHierarchy);
         } catch (error) {
             console.error("Error:", error);
         }
+    };
+
+    // Helper function to build the hierarchical structure of pages
+    const buildHierarchy = (pages: Page[]): Page[] => {
+        if (!pages || pages.length === 0) {
+            return []; // Return an empty array if pages is undefined or empty
+        }
+
+        const pageMap = new Map<string, Page>();
+
+        // Create a map of pages by their id
+        pages.forEach((page) => {
+            pageMap.set(page.id, { ...page, subPages: [] });
+        });
+
+        // Build the hierarchy
+        const rootPages: Page[] = [];
+        pages.forEach((page) => {
+            if (page.parentId === null) {
+                // This is a root page
+                rootPages.push(pageMap.get(page.id)!);
+            } else {
+                // This is a subpage; add it to its parent's subpages array
+                const parentPage = pageMap.get(page.parentId);
+                if (parentPage) {
+                    parentPage.subPages!.push(pageMap.get(page.id)!); // Use ! to assert subPages exists
+                }
+            }
+        });
+
+        return rootPages;
     };
 
     useEffect(() => {
@@ -158,6 +175,73 @@ export function SidebarComponent() {
         localStorage.removeItem("activeSpace");
     };
 
+    const onAddPage = (page: Page, notebookId: string) => {
+        //todo save on server function
+        // Crear una copia actualizada de los notebooks
+        const updatedNotebooks = notebooks.map((notebook) => {
+            if (notebook.id !== notebookId) return notebook;
+
+            // Función recursiva para agregar la página en la jerarquía correcta
+            const addPageToHierarchy = (pages: Page[]): Page[] => {
+                return pages.map((currentPage) => {
+                    // Encontrar la página padre y agregar la subpágina
+                    if (currentPage.id === page.parentId) {
+                        return {
+                            ...currentPage,
+                            subPages: [...(currentPage.subPages || []), page],
+                        };
+                    }
+
+                    // Buscar recursivamente en subpáginas
+                    if (currentPage.subPages?.length) {
+                        return {
+                            ...currentPage,
+                            subPages: addPageToHierarchy(currentPage.subPages),
+                        };
+                    }
+
+                    return currentPage;
+                });
+            };
+
+            return page.parentId
+                ? {
+                      ...notebook,
+                      pages: addPageToHierarchy(notebook.pages),
+                  }
+                : {
+                      ...notebook,
+                      pages: [...notebook.pages, page], // Agregar como página raíz
+                  };
+        });
+
+        setNotebooks(updatedNotebooks);
+        console.log("added", updatedNotebooks);
+    };
+    const onEditPage = (pageId: string, newTitle: string, notebookId: string) => {
+        // Update the notebooks state
+        const updatedNotebooks = notebooks.map(notebook => {
+            if (notebook.id !== notebookId) return notebook;
+    
+            const updatePageTitle = (pages: Page[]): Page[] => pages.map(page => {
+                if (page.id === pageId) {
+                    return { ...page, title: newTitle };
+                }
+                if (page.subPages?.length) {
+                    return { ...page, subPages: updatePageTitle(page.subPages) };
+                }
+                return page;
+            });
+    
+            return {
+                ...notebook,
+                pages: updatePageTitle(notebook.pages)
+            };
+        });
+    
+        setNotebooks(updatedNotebooks);
+        // Here you would typically also make an API call to persist the change
+    };
     return (
         <Sidebar collapsible="icon">
             <SidebarHeader>
@@ -207,7 +291,11 @@ export function SidebarComponent() {
                     <SidebarGroupLabel>Notebooks</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            <SidebarNotebooks notebooks={notebooks}/>
+                            <SidebarNotebooks
+                                notebooks={notebooks}
+                                onAddPage={onAddPage}
+                                onEditPage={onEditPage}
+                            />
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>

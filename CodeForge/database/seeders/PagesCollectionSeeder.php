@@ -1,13 +1,10 @@
 <?php
-
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-use App\Models\Page;
 use App\Models\Notebook;
+use App\Models\Page;
 use App\Models\Space;
-use App\Models\User;
+use Illuminate\Database\Seeder;
 use MongoDB\BSON\ObjectId;
 
 class PagesCollectionSeeder extends Seeder
@@ -18,142 +15,83 @@ class PagesCollectionSeeder extends Seeder
     public function run(): void
     {
         // Clear existing pages
-        // Page::truncate();
+        Page::truncate();
         // Find or create a notebook
         $notebook = Notebook::firstOrCreate([
             'name' => 'Test Notebook',
         ], [
             'description' => 'This is a test notebook.',
-            'spaceId' => new ObjectId(Space::first()->_id),
-            'pages' => [], // Initialize pages as an empty array
-            'createdAt' => now(),
-            'updatedAt' => now(),
+            'spaceId'     => new ObjectId(Space::first()->_id),
         ]);
 
-        // ✅ Create the first top-level page
-        $page1 = Page::create([
-            'title' => 'Test Page 1',
-            'blocks' => [
-                [
-                    'type' => 'heading',
-                    'level' => 1,
-                    'content' => 'Welcome to Test Page 1',
-                ],
-                [
-                    'type' => 'paragraph',
-                    'content' => 'This is a test page.',
+        // Create pages for the notebook
+        $pages = [
+            [
+                '_id'       => new ObjectId('64a1b2c3d4e5f6a7b8c9d0e1'),
+                'title'     => 'Introduction',
+                'parentId'  => null,
+                'ancestors' => [],
+                'version'   => 1,
+                'isCurrent' => true,
+                'blocks'    => [
+                    [
+                        'type'    => 'heading',
+                        'level'   => 2,
+                        'content' => 'This is the initial content of the Introduction page.',
+                    ],
+                    [
+                        'type'    => 'paragraph',
+                        'content' => 'This is another test subpage.',
+                    ],
                 ],
             ],
-            'notebookId' => new ObjectId($notebook->_id),
-            'author' => new ObjectId(User::first()->_id),
-            'createdAt' => now(),
-            'updatedAt' => now(),
-            'version' => 1,
-        ]);
-
-        // ✅ Prepare page1 data for the notebook
-        $page1Data = [
-            '_id' =>new ObjectId($page1->_id), // Ensure ID is a string
-            'title' => $page1->title,
-            'subPages' => [],
-        ];
-
-        // ✅ Add page1 to notebook's pages array
-        $notebook->push('pages', $page1Data);
-        $notebook->save();
-
-        // ✅ Create a subpage for page1
-        $subpage1 = Page::create([
-            'title' => 'Test Subpage 1',
-            'blocks' => [
-                [
-                    'type' => 'heading',
-                    'level' => 2,
-                    'content' => 'Welcome to Test Subpage 1',
-                ],
-                [
-                    'type' => 'paragraph',
-                    'content' => 'This is a test subpage.',
+            [
+                '_id'       => new ObjectId('64a1b2c3d4e5f6a7b8c9d0e2'),
+                'title'     => 'Chapter 1',
+                'parentId'  => null,
+                'ancestors' => [],
+                'version'   => 1,
+                'isCurrent' => true,
+                'blocks'    => [
+                    [
+                        'type'    => 'heading',
+                        'level'   => 3,
+                        'content' => 'This is the initial content of Chapter 1.',
+                    ],
+                    [
+                        'type'    => 'paragraph',
+                        'content' => 'This is another test subpage.',
+                    ],
                 ],
             ],
-            'notebookId' => new ObjectId($notebook->_id),
-            'author' => new ObjectId(User::first()->_id),
-            'parentPage' => new ObjectId($page1->_id),
-            'version' => 1,
-        ]);
-
-        // ✅ Prepare subpage1 data
-        $subpage1Data = [
-            '_id' =>new ObjectId($subpage1->_id),
-            'title' => $subpage1->title,
-            'subPages' => [],
-        ];
-
-        // ✅ Add subpage1 to page1 using addSubPage
-        $notebook = Notebook::find($notebook->_id);
-        $notebook->addSubPage($page1->_id, $subpage1Data);
-        $notebook->save();
-
-        // ✅ Create a second top-level page
-        $page2 = Page::create([
-            'title' => 'Test Page 2',
-            'blocks' => [
-                [
-                    'type' => 'heading',
-                    'level' => 1,
-                    'content' => 'Welcome to Test Page 2',
-                ],
-                [
-                    'type' => 'paragraph',
-                    'content' => 'This is another test page.',
+            [
+                '_id'       => new ObjectId('64a1b2c3d4e5f6a7b8c9d0e3'),
+                'title'     => 'Chapter 1.1',
+                'parentId'  => new ObjectId('64a1b2c3d4e5f6a7b8c9d0e2'),
+                'ancestors' => [new ObjectId('64a1b2c3d4e5f6a7b8c9d0e2')],
+                'version'   => 1,
+                'isCurrent' => true,
+                'blocks'    => [
+                    [
+                        'type'    => 'heading',
+                        'level'   => 2,
+                        'content' => 'This is the initial content of Section 1.1.',
+                    ],
+                    [
+                        'type'    => 'code_block',
+                        'content' => 'This is a codeblock',
+                    ],
                 ],
             ],
-            'notebookId' => new ObjectId($notebook->_id),
-            'author' => new ObjectId(User::first()->_id),
-            'version' => 1,
-        ]);
-
-        // ✅ Prepare page2 data
-        $page2Data = [
-            '_id' =>new ObjectId($page2->_id),
-            'title' => $page2->title,
-            'subPages' => [],
         ];
 
-        // ✅ Add page2 to notebook's pages array
-        $notebook->push('pages', $page2Data);
-        $notebook->save();
-
-        // ✅ Create a subpage for page2
-        $subpage2 = Page::create([
-            'title' => 'Test Subpage 2',
-            'blocks' => [
-                [
-                    'type' => 'heading',
-                    'level' => 2,
-                    'content' => 'Welcome to Test Subpage 2',
-                ],
-                [
-                    'type' => 'paragraph',
-                    'content' => 'This is another test subpage.',
-                ],
-            ],
-            'notebookId' => new ObjectId($notebook->_id),
-            'author' => new ObjectId(User::first()->_id),
-            'parentPage' => new ObjectId($page2->_id),
-            'version' => 1,
-        ]);
-
-        // ✅ Prepare subpage2 data
-        $subpage2Data = [
-            '_id' =>new ObjectId($subpage2->_id),
-            'title' => $subpage2->title,
-            'subPages' => [],
-        ];
-
-        // ✅ Add subpage2 to page2 using addSubPage
-        $notebook = Notebook::find($notebook->_id);
-        $notebook->addSubPage($page2->_id, $subpage2Data);
-        $notebook->save();
+        foreach ($pages as $pageData) {
+            Page::firstOrCreate(
+                ['_id' => $pageData['_id']],
+                array_merge($pageData, [
+                    'notebookId' => new ObjectId($notebook->_id),
+                ])
+            );
+        }
     }
 }

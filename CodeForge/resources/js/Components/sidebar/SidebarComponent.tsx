@@ -116,7 +116,8 @@ export function SidebarComponent() {
                 `notebooks/${spaceId}`
             );
             const notebooksWithPages = response.data;
-
+            console.log("raw",notebooksWithPages);
+            
             // Build the hierarchical structure for each notebook's pages
             const notebooksWithHierarchy: NotebookWithHierarchy[] =
                 notebooksWithPages.map((notebook) => {

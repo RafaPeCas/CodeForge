@@ -14,29 +14,42 @@ class PageController extends Controller
             'notebookId' => 'required|string',
             'title'      => 'required|string|max:255',
             'parentId'   => 'nullable|string',
-            'ancestors'  => 'nullable|array',
-            'version'    => 'required|integer|min:1',
-            'isCurrent'  => 'required|boolean',
-            'blocks'     => 'sometimes|array',
         ]);
-
+    
         // If validation fails, return error response
         if ($request->fails()) {
             return response()->json(['errors' => $request->errors()], 422);
         }
-
+    
+        // Initialize ancestors array
+        $ancestors = [];
+    
+        // If parentId is provided, fetch the parent's ancestors and append the parentId
+        if ($request->has('parentId') && $request->parentId) {
+            $parent = Page::find($request->parentId);
+            if ($parent) {
+                $ancestors = $parent->ancestors ?? [];
+                $ancestors[] = $parent->id;
+            }
+        }
+    
+        // Set default values for version and isCurrent if not provided
+        $version = 1;
+        $isCurrent = true;
+    
         // Create the page
         $page = Page::create([
             'notebookId' => $request->notebookId,
             'title'      => $request->title,
             'parentId'   => $request->parentId,
-            'ancestors'  => $request->ancestors,
-            'version'    => $request->version,
-            'isCurrent'  => $request->isCurrent,
-            'block'      => $request->block,
+            'ancestors'  => $ancestors,
+            'version'    => $version,
+            'isCurrent'  => $isCurrent,
+            'blocks'     => [],
         ]);
-
+    
         return response()->json($page, 201);
+    
     }
 
     public function update(Request $request, $pageId)
@@ -83,7 +96,7 @@ class PageController extends Controller
     // Retrieve all pages in a notebook
     public function index($notebookId)
     {
-        $pages = Page::where('notebookId', $notebookId)->where('isCurrent', true)->get(['title', 'parentId', 'ancestors']);
+        $pages = Page::where('notebookId', $notebookId)->where('isCurrent', true)->get(['title', 'parentId','notebookId', 'ancestors']);
         return response()->json($pages, 200);
     }
 

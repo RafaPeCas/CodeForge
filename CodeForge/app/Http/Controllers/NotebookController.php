@@ -23,7 +23,7 @@ class NotebookController extends Controller
         $notebook = Notebook::create([
             'name'        => $request->name,
             'description' => $request->description,
-            'spaceId'     => $request->spaceId,
+            'spaceId'     => $spaceId,
         ]);
 
         // Add the notebook to the space

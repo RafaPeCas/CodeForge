@@ -36,6 +36,7 @@ export interface Page {
     id: string;
     title: string;
     parentId: string | null;
+    notebookId: string;
     ancestors: string[]; // Normalized ancestors format
     subPages?: Page[];
 }
@@ -52,4 +53,20 @@ export interface Notebook {
 
 export interface NotebookWithHierarchy extends Omit<Notebook, "pages"> {
     pages: Page[]; // Normalized pages with hierarchy
+}
+
+// testing
+
+export interface Notebook {
+    id: string;
+    name: string;
+    description: string;
+}
+
+export interface Page {
+    id: string;
+    title: string;
+    parentId: string | null;
+    ancestors: string[];
+    notebookId: string;
 }

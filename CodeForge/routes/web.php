@@ -49,11 +49,16 @@ Route::middleware('auth')->group(function () {
     
     // Rutas para Páginas
     Route::prefix('pages')->group(function () {
+        // add notebookID
         Route::post('/', [PageController::class, 'store'])->name('pages.create'); // create a page
         Route::get('/{notebookId}', [PageController::class, 'index'])->name('pages.index'); // all the pages in a notebook
         Route::get('/show/{id}', [PageController::class, 'show'])->name('pages.show'); // get a single page
         Route::put('/{id}', [PageController::class, 'update'])->name('pages.update'); // update a page (add a new version)
         Route::delete('/{id}', [PageController::class, 'destroy'])->name('pages.destroy'); // destroy a page
+        //sidebar
+        Route::post('/', [PageController::class, 'store'])->name('pages.create'); // create a page
+        Route::patch('/{notebookId}/pages/{id}', [PageController::class, 'update'])->name('pages.update'); // update a page
+        Route::delete('/{notebookId}/pages/{id}', [PageController::class, 'destroy'])->name('pages.destroy'); // destroy a page
     });
     
 });

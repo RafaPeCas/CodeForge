@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use MongoDB\BSON\ObjectId;
 
+use function Laravel\Prompts\error;
+
 class SpaceController extends Controller
 {
     public function index()
@@ -71,6 +73,27 @@ class SpaceController extends Controller
     public function update(Request $request, $id)
     {
         $space = Space::find($id);
+        $user = User::find($space->author);
+
+        $spaces = json_decode(json_encode($user->spaces), true);
+    
+        try {
+            foreach ($spaces as &$item) {
+                error_log("Procesando item: " . json_encode($item));
+    
+                if (isset($item['id']['$oid']) && $item['id']['$oid'] == $id) {
+                    $item['name'] = $request->spaceName;
+                    error_log("Elemento actualizado: " . json_encode($item));
+                }
+            }
+        } catch (\Exception $e) {
+            error_log("Error en el foreach: " . $e->getMessage());
+            return response()->json(["error" => "Error al procesar los datos"], 500);
+        }
+        
+
+        $user->spaces = $spaces;
+        $user->save();
         $space->name = $request->spaceName;
         $space->description = $request->spaceDescription;
         $space->save();

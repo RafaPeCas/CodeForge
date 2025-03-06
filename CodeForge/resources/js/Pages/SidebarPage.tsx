@@ -1,11 +1,8 @@
 import { Head } from "@inertiajs/react";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Separator } from "@/Components/ui/separator";
 import { BlockEditor } from "@/Components/block-editor/block-editor";
-import { Button } from "@/Components/ui/button"
-import { Card } from "@/Components/ui/card"
-import { Copy, CodeIcon, Type, AlignLeft } from "lucide-react"
+import { MarkdownEditor } from "@/Components/block-editor/custom-editor";
 
 export default function SidebarPage({
     children,
@@ -16,10 +13,8 @@ export default function SidebarPage({
         <AuthenticatedLayout header="Main">
             {/* //todo page title */}
             <Head title="Main" />
-            {/* <SidebarComponent/> */}
-            <BlockEditor>
-
-            </BlockEditor>
+            <BlockEditor></BlockEditor>
+            <MarkdownEditor></MarkdownEditor>
         </AuthenticatedLayout>
     );
 }

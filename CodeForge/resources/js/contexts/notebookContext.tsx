@@ -3,6 +3,7 @@ import {
     ReactNode,
     startTransition,
     useContext,
+    useEffect,
     useOptimistic,
     useState,
 } from "react";
@@ -100,14 +101,14 @@ const api = {
         title: string
     ): Promise<Page> => {
         const response = await axios.patch(
-            `${notebookId}/pages/${pageId}`,
+            `/pages/${notebookId}/pages/${pageId}`,
             { title }
         );
         return response.data;
     },
 
     deletePage: async (notebookId: string, pageId: string): Promise<void> => {
-        await axios.delete(`${notebookId}/pages/${pageId}`);
+        await axios.delete(`/pages/${notebookId}/pages/${pageId}`);
     },
 };
 
@@ -126,12 +127,17 @@ export function useNotebooks() {
 //provider
 export function NotebookProvider({
     children,
-    initialNotebooks,
+    providedNotebooks,
 }: {
     children: ReactNode;
-    initialNotebooks: Notebook[];
+    providedNotebooks: Notebook[];
 }) {
-    const [notebooks, setNotebooks] = useState<Notebook[]>(initialNotebooks);
+    const [notebooks, setNotebooks] = useState<Notebook[]>(providedNotebooks);
+
+    useEffect(() => {
+        console.log("Updating notebooks from providedNotebooks:", providedNotebooks);
+        setNotebooks(providedNotebooks);
+    }, [providedNotebooks]); // Depend on providedNotebooks
 
     const calculateAncestors = (
         notebook: Notebook,

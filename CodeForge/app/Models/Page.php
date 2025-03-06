@@ -1,39 +1,20 @@
 <?php
-
 namespace App\Models;
 
-use MongoDB\Laravel\Eloquent\Model;
 use MongoDB\BSON\ObjectId;
+use MongoDB\Laravel\Eloquent\Model;
 
 class Page extends Model
 {
     protected $collection = 'pages';
-    protected $fillable = [
+    protected $fillable   = [
+        'notebookId',
         'title',
         'blocks',
-        'notebookId',
-        'author',
-        'parentPage',
+        'parentId',
+        'ancestors',
         'version',
-        'history',
+        'isCurrent',
     ];
 
-    /**
-     * $page->addVersion([
-     *  'version' => 2,
-     *  'title' => 'Updated Title',
-     *  'blocks' => [
-     *      [
-     *          'type' => 'paragraph',
-     *          'content' => 'This is an updated version.',
-     *      ],
-     *  ],
-     *  'updatedAt' => now(),
-     *  'updatedBy' => new ObjectId('user_id'),
-     *  ]);
-     */
-    public function addVersion(array $versionData)
-    {
-        $this->push('history', $versionData);
-    }
 }

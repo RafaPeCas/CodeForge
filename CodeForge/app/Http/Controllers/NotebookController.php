@@ -95,6 +95,7 @@ class NotebookController extends Controller
 
         // Find the space that has the notebook
         $space = Space::find($notebook->spaceId);
+        error_log($space);
         // pass the notebook id as an ObjectId
         $notebookObject = $notebook->_id = new ObjectId($notebook->_id);
 

@@ -3,53 +3,70 @@ namespace App\Http\Controllers;
 
 use App\Models\Page;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
+use MongoDB\BSON\ObjectId;
 
 class PageController extends Controller
 {
     // Create a new page
-    public function store(Request $request)
+    public function store(Request $request, $notebookId)
     {
-        $request->validate([
-            'notebookId' => 'required|string',
-            'title'      => 'required|string|max:255',
-            'parentId'   => 'nullable|string',
-        ]);
-    
-        // If validation fails, return error response
-        if ($request->fails()) {
-            return response()->json(['errors' => $request->errors()], 422);
+    // Validate the request
+    $request->validate([
+        'title'    => 'required|string|max:255',
+        'parentId' => 'nullable|string',
+    ]);
+
+    // Initialize ancestors array
+    $ancestors = [];
+
+    // Handle parentId existence check
+    if (!is_null($request->parentId) && $request->parentId !== '') {
+        $parent = Page::find($request->parentId);
+        if ($parent) {
+            $ancestors   = $parent->ancestors ?? [];
+            $ancestors[] = new ObjectId($parent->id);
         }
-    
-        // Initialize ancestors array
-        $ancestors = [];
-    
-        // If parentId is provided, fetch the parent's ancestors and append the parentId
-        if ($request->has('parentId') && $request->parentId) {
-            $parent = Page::find($request->parentId);
-            if ($parent) {
-                $ancestors = $parent->ancestors ?? [];
-                $ancestors[] = $parent->id;
-            }
-        }
-    
-        // Set default values for version and isCurrent if not provided
-        $version = 1;
-        $isCurrent = true;
-    
-        // Create the page
+    }
+
+    // Convert notebookId to ObjectId
+    $notebookId = new ObjectId($notebookId);
+
+    // Handle parentId conversion safely
+    $parentId = (!is_null($request->parentId) && $request->parentId !== '') ? new ObjectId($request->parentId) : null;
+
+    // Create the page
+    try {
         $page = Page::create([
-            'notebookId' => $request->notebookId,
+            'notebookId' => $notebookId,
             'title'      => $request->title,
-            'parentId'   => $request->parentId,
+            'parentId'   => $parentId,
             'ancestors'  => $ancestors,
-            'version'    => $version,
-            'isCurrent'  => $isCurrent,
+            'version'    => 1,
+            'isCurrent'  => true,
             'blocks'     => [],
         ]);
-    
+
         return response()->json($page, 201);
-    
+    } catch (\Exception $e) {
+        // Log the error for debugging
+        return response()->json(['error' => 'Internal Server Error'], 500);
+    }
+    }
+
+    public function rename(Request $request, $notebookId, $id)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+        ]);
+
+        $page = Page::find($id);
+        if (! $page) {
+            return response()->json(['error' => 'Page not found'], 404);
+        }
+
+        $page->update(['title' => $request->title]);
+
+        return response()->json($page, 200);
     }
 
     public function update(Request $request, $pageId)
@@ -71,10 +88,10 @@ class PageController extends Controller
         }
 
         $newVersion = Page::create([
-            'pageId'     => $pageId,
-            'notebookId' => $currentVersion->notebookId,
+            'pageId'     => new ObjectId($pageId),
+            'notebookId' => new ObjectId($currentVersion->notebookId),
             'title'      => $currentVersion->title,
-            'parentId'   => $currentVersion->parentId,
+            'parentId'   => new ObjectId($currentVersion->parentId),
             'ancestors'  => $currentVersion->ancestors,
             'version'    => $currentVersion->version + 1,
             'isCurrent'  => true,
@@ -96,7 +113,7 @@ class PageController extends Controller
     // Retrieve all pages in a notebook
     public function index($notebookId)
     {
-        $pages = Page::where('notebookId', $notebookId)->where('isCurrent', true)->get(['title', 'parentId','notebookId', 'ancestors']);
+        $pages = Page::where('notebookId', $notebookId)->where('isCurrent', true)->get(['title', 'parentId', 'notebookId', 'ancestors']);
         return response()->json($pages, 200);
     }
 
@@ -113,10 +130,10 @@ class PageController extends Controller
     }
 
     // Delete a page (all versions)
-    public function destroy($pageId)
+    public function destroy($notebookId, $id)
     {
         // Delete all versions of the page
-        $deleted = Page::where('pageId', $pageId)->delete();
+        $deleted = Page::where('_id', $id)->delete();
 
         if ($deleted) {
             return response()->json(['message' => 'Page and all its versions deleted successfully'], 200);

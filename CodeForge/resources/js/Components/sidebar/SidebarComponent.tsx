@@ -25,7 +25,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import SidebarNotebooks from "./SidebarNotebooks";
 import { Notebook, NotebookWithHierarchy, Page, RawPage } from "@/types";
-import { on } from "events";
 
 // Menu items.
 const items = [

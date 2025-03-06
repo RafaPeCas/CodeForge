@@ -6,70 +6,93 @@ import {
 } from "@/Components/ui/sidebar";
 import { NotebookProvider } from "@/contexts/notebookContext";
 import { NotebookSidebar } from "@/contexts/NotebookSidebar";
-import { PropsWithChildren, ReactNode } from "react";
+import axios from "axios";
+import { PropsWithChildren, ReactNode, useEffect, useState } from "react";
 
 export default function Authenticated({
     header,
     children,
 }: PropsWithChildren<{ header?: ReactNode }>) {
-    const initialNotebooks = [
+    interface Notebook {
+        id: string;
+        name: string;
+        description: string;
+        spaceId: string;
+        pages: Page[];
+    }
+    interface Page {
+        id: string;
+        title: string;
+        parentId: string | null;
+        ancestors: string[];
+        notebookId: string;
+    }
+    interface Space {
+        name: string;
+        logo: string;
+        plan: string;
+        id: string;
+    }
+    
+    const [spaces, setSpaces] = useState<Space[]>([
         {
-            id: "notebook-1",
-            name: "Work",
-            description: "Work-related notes",
-            spaceId: "space-1",
-            pages: [
-                {
-                    id: "page-1",
-                    title: "Project A",
-                    parentId: null,
-                    ancestors: [],
-                    notebookId: "notebook-1",
-                },
-                {
-                    id: "page-2",
-                    title: "Meeting Notes",
-                    parentId: null,
-                    ancestors: [],
-                    notebookId: "notebook-1",
-                },
-            ],
+            name: "Cargando...",
+            logo: "DefaultLogo",
+            plan: "Cargando...",
+            id: "",
         },
-        {
-            id: "notebook-2",
-            name: "Personal",
-            description: "Personal notes and ideas",
-            spaceId: "space-1",
-            pages: [
-                {
-                    id: "page-3",
-                    title: "Shopping List",
-                    parentId: null,
-                    ancestors: [],
-                    notebookId: "notebook-2",
-                },
-                {
-                    id: "page-4",
-                    title: "Travel Plans",
-                    parentId: null,
-                    ancestors: [],
-                    notebookId: "notebook-2",
-                },
-                {
-                    id: "page-5",
-                    title: "Travel Plans2",
-                    parentId: "page-4",
-                    ancestors: ["page-4"],
-                    notebookId: "notebook-2",
-                },
-            ],
-        },
-    ];
+    ]);
+    const [notebooks, setNotebooks] = useState<Notebook[]>([]);
+
+    const fetchSpaces = async () => {
+        try {
+            const response = await axios.get("/sidebar");
+            const transformedSpaces = response.data.map((space: any) => ({
+                name: space.name,
+                id: space.id.$oid,
+                logo: "",
+                plan: "Author",
+            }));
+
+            setSpaces(transformedSpaces);
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    };
+    const fetchNotebooks = async (): Promise<void> => {
+        const savedSpace = localStorage.getItem("activeSpace");
+        let spaceId: string;
+
+        if (savedSpace) {
+            spaceId = JSON.parse(savedSpace).id;
+        } else if (spaces.length > 0) {
+            spaceId = spaces[0].id;
+        } else {
+            console.error("No space ID available");
+            return;
+        }
+
+        try {
+            // Fetch notebooks and their pages from the backend
+            const response = await axios.get<Notebook[]>(
+                `notebooks/${spaceId}`
+            );
+            console.log("To provide notebooks:", response.data);
+            setNotebooks(response.data);
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchSpaces();
+        fetchNotebooks();
+    }, []);
+
     return (
-        <NotebookProvider initialNotebooks={initialNotebooks}>
+        <NotebookProvider providedNotebooks={notebooks}>
             <SidebarProvider>
-                <NotebookSidebar />
-                {/* <SidebarComponent /> */}
+                <NotebookSidebar spaces={spaces} fetchNotebooks={fetchNotebooks} fetchSpaces={fetchSpaces} />
                 <SidebarInset>
                     <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
                         <SidebarTrigger className="-ml-1" />

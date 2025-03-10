@@ -1,6 +1,4 @@
 import { Button } from '@/Components';
-import NotebooksComponent from '@/Components/NotebooksComponent';
-import PageComponent from '@/Components/PageComponent';
 import { PageProps } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 
@@ -365,8 +363,6 @@ export default function Welcome({
                 </div>
             </div>
             <Button>shadcn alive?</Button>
-            <NotebooksComponent />
-            <PageComponent />
         </>
     );
 }

@@ -18,13 +18,7 @@ import {
 import { CreateSpaceDialog } from "./CreateSpaceDialog"; // Importa el nuevo componente
 import axios from "axios";
 import { z } from "zod";
-
-interface Space {
-    name: string;
-    logo: string;
-    plan: string;
-    id: string;
-}
+import { Space } from "@/types";
 
 interface SpaceSwitchProps {
     spaces: Space[];

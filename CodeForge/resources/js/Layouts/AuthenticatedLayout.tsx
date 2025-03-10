@@ -5,7 +5,8 @@ import {
     SidebarTrigger,
 } from "@/Components/ui/sidebar";
 import { NotebookProvider } from "@/contexts/notebookContext";
-import { NotebookSidebar } from "@/contexts/NotebookSidebar";
+import { NotebookSidebar } from "@/Components/sidebar/NotebookSidebar";
+import { Notebook, Space } from "@/types";
 import axios from "axios";
 import { PropsWithChildren, ReactNode, useEffect, useState } from "react";
 
@@ -13,27 +14,6 @@ export default function Authenticated({
     header,
     children,
 }: PropsWithChildren<{ header?: ReactNode }>) {
-    interface Notebook {
-        id: string;
-        name: string;
-        description: string;
-        spaceId: string;
-        pages: Page[];
-    }
-    interface Page {
-        id: string;
-        title: string;
-        parentId: string | null;
-        ancestors: string[];
-        notebookId: string;
-    }
-    interface Space {
-        name: string;
-        logo: string;
-        plan: string;
-        id: string;
-    }
-    
     const [spaces, setSpaces] = useState<Space[]>([
         {
             name: "Cargando...",
@@ -59,6 +39,7 @@ export default function Authenticated({
             console.error("Error:", error);
         }
     };
+    
     const fetchNotebooks = async (): Promise<void> => {
         const savedSpace = localStorage.getItem("activeSpace");
         let spaceId: string;
@@ -92,7 +73,11 @@ export default function Authenticated({
     return (
         <NotebookProvider providedNotebooks={notebooks}>
             <SidebarProvider>
-                <NotebookSidebar spaces={spaces} fetchNotebooks={fetchNotebooks} fetchSpaces={fetchSpaces} />
+                <NotebookSidebar
+                    spaces={spaces}
+                    fetchNotebooks={fetchNotebooks}
+                    fetchSpaces={fetchSpaces}
+                />
                 <SidebarInset>
                     <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
                         <SidebarTrigger className="-ml-1" />

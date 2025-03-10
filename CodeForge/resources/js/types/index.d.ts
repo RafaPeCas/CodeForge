@@ -13,32 +13,12 @@ export type PageProps<
     };
 };
 
-export interface Space {
-    name: string;
-    logo: string;
-    plan: string;
-    id: string;
-}
-
-export interface RawAncestor {
-    $oid: string; // The raw ancestor format
-}
-
-export interface RawPage {
-    id: string;
-    title: string;
-    parentId: string | null;
-    ancestors: RawAncestor[]; // Raw ancestors format
-    subPages?: RawPage[];
-}
-
 export interface Page {
     id: string;
     title: string;
     parentId: string | null;
+    ancestors: string[];
     notebookId: string;
-    ancestors: string[]; // Normalized ancestors format
-    subPages?: Page[];
 }
 
 export interface Notebook {
@@ -46,27 +26,12 @@ export interface Notebook {
     name: string;
     description: string;
     spaceId: string;
-    created_at: string;
-    updated_at: string;
-    pages: RawPage[]; // Raw pages before normalization
+    pages: Page[];
 }
 
-export interface NotebookWithHierarchy extends Omit<Notebook, "pages"> {
-    pages: Page[]; // Normalized pages with hierarchy
-}
-
-// testing
-
-export interface Notebook {
-    id: string;
+export interface Space {
     name: string;
-    description: string;
-}
-
-export interface Page {
+    logo: string;
+    plan: string;
     id: string;
-    title: string;
-    parentId: string | null;
-    ancestors: string[];
-    notebookId: string;
 }

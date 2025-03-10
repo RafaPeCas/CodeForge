@@ -10,13 +10,16 @@ import {
     SidebarMenuItem,
     SidebarRail,
 } from "@/Components/ui/sidebar";
-import { Book, DoorOpen, Edit, FormInputIcon, Home, PanelLeftIcon, Trash } from "lucide-react";
-import { AddNotebookDialog } from "./AddDialog";
+import { Book, DoorOpen, Edit, FormInputIcon, Home, MoreHorizontal, PanelLeftIcon, Plus, Trash } from "lucide-react";
+
 import { NotebookTree } from "./NotebookTree";
 import { Button } from "@/Components";
-import { useNotebooks } from "./notebookContext";
+import { useNotebooks } from "../../contexts/notebookContext";
 import { SpaceSwitch } from "@/Components/sidebar/SpaceSwitch";
 import { Link } from "@inertiajs/react";
+import { Space } from "@/types";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/Components/ui/dropdown-menu";
+import { AddNotebookDialog } from "./AddDialog";
 
 const nav = [
     {
@@ -53,13 +56,6 @@ const handleLogout = () => {
     localStorage.removeItem("activeSpace");
 };
 
-interface Space {
-    name: string;
-    logo: string;
-    plan: string;
-    id: string;
-}
-
 interface NotebookProps {
     spaces: Space[];
     fetchSpaces: () => void;
@@ -70,7 +66,7 @@ export function NotebookSidebar({
     fetchSpaces,
     fetchNotebooks,
 }: NotebookProps) {
-    const { notebooks, deleteNotebook } = useNotebooks();
+    const { notebooks } = useNotebooks();
     console.log("Notebooks from context:", notebooks);
     return (
         <Sidebar collapsible="icon">
@@ -120,30 +116,19 @@ export function NotebookSidebar({
                 <SidebarGroup>
                     <SidebarMenu>
                         <SidebarMenuItem>
-                            <SidebarMenuButton size="lg">
-                                <div className="flex items-center">
-                                    <Book className="h-5 w-5 mr-2" />
-                                    <span className="font-medium">
-                                        Notebooks
-                                    </span>
-                                </div>
-                            </SidebarMenuButton>
+                            <SidebarGroupLabel className="flex items-center justify-between">
+                                <span>
+                                Notebooks
+                                </span>
+                                <AddNotebookDialog />
+                                </SidebarGroupLabel>
                         </SidebarMenuItem>
                     </SidebarMenu>
-                    <AddNotebookDialog />
+
                     <SidebarMenu>
                         {notebooks.map((notebook) => (
                             <SidebarMenuItem key={notebook.id}>
                                 <NotebookTree notebook={notebook} />
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-destructive hover:text-destructive ml-3 mt-2"
-                                    onClick={() => deleteNotebook(notebook.id)}
-                                >
-                                    <Trash className="h-4 w-4 mr-2" />
-                                    Delete Notebook
-                                </Button>
                             </SidebarMenuItem>
                         ))}
                     </SidebarMenu>

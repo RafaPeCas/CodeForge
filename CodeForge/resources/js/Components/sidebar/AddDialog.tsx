@@ -1,5 +1,5 @@
 import { FormEvent, useState } from "react"
-import { useNotebooks } from "./notebookContext"
+import { useNotebooks } from "../../contexts/notebookContext"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/Components/ui/dialog"
 import { Button } from "@/Components"
 import { Plus } from "lucide-react"
@@ -30,9 +30,8 @@ export function AddNotebookDialog() {
     return (
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
-          <Button variant="outline" className="w-full">
+          <Button>
             <Plus className="mr-2 h-4 w-4" />
-            Add Notebook
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">

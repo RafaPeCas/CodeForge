@@ -58,7 +58,6 @@ export default function Authenticated({
             const response = await axios.get<Notebook[]>(
                 `notebooks/${spaceId}`
             );
-            console.log("To provide notebooks:", response.data);
             setNotebooks(response.data);
         } catch (error) {
             console.error("Error:", error);
@@ -67,6 +66,7 @@ export default function Authenticated({
 
     useEffect(() => {
         fetchSpaces();
+        console.log("Fetch")
         fetchNotebooks();
     }, []);
 

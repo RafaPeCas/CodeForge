@@ -120,7 +120,6 @@ export function NotebookProvider({
     const [notebooks, setNotebooks] = useState<Notebook[]>(providedNotebooks);
 
     useEffect(() => {
-        console.log("Updating notebooks from providedNotebooks:", providedNotebooks);
         setNotebooks(providedNotebooks);
     }, [providedNotebooks]); // Depend on providedNotebooks
 

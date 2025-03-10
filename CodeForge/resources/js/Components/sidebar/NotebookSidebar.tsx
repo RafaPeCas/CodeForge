@@ -10,15 +10,13 @@ import {
     SidebarMenuItem,
     SidebarRail,
 } from "@/Components/ui/sidebar";
-import { Book, DoorOpen, Edit, FormInputIcon, Home, MoreHorizontal, PanelLeftIcon, Plus, Trash } from "lucide-react";
+import { DoorOpen, Edit, FormInputIcon, Home, PanelLeftIcon } from "lucide-react";
 
 import { NotebookTree } from "./NotebookTree";
-import { Button } from "@/Components";
 import { useNotebooks } from "../../contexts/notebookContext";
 import { SpaceSwitch } from "@/Components/sidebar/SpaceSwitch";
 import { Link } from "@inertiajs/react";
 import { Space } from "@/types";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/Components/ui/dropdown-menu";
 import { AddNotebookDialog } from "./AddDialog";
 
 const nav = [
@@ -67,7 +65,6 @@ export function NotebookSidebar({
     fetchNotebooks,
 }: NotebookProps) {
     const { notebooks } = useNotebooks();
-    console.log("Notebooks from context:", notebooks);
     return (
         <Sidebar collapsible="icon">
             <SidebarHeader>

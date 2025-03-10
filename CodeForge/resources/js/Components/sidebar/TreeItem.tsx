@@ -1,5 +1,4 @@
 import {
-    ChevronDown,
     ChevronRight,
     File,
     Folder,
@@ -19,11 +18,7 @@ import { Input } from "@/Components/ui/input";
 import { useNotebooks } from "../../contexts/notebookContext";
 import { useState } from "react";
 import { Page } from "@/types";
-import {
-    SidebarMenuSub,
-    SidebarMenuSubItem,
-} from "@/Components/ui/sidebar";
-import { cn } from "@/lib/utils";
+import { SidebarMenuSub, SidebarMenuSubItem } from "@/Components/ui/sidebar";
 import {
     Collapsible,
     CollapsibleContent,
@@ -84,94 +79,108 @@ export function TreeItem({
 
     return (
         <Collapsible className="group/collapsible">
-            <CollapsibleTrigger
-                asChild
+            <SidebarMenuSubItem
+                className="group/item cursor-pointer flex flex-row items-center justify-between hover:backdrop-brightness-95 rounded-md"
                 onMouseEnter={() => setIsHover(true)}
                 onMouseLeave={() => setIsHover(false)}
-                // className="bg-red-500"
+                onClick={(event) => {
+                    const target = event.target as HTMLElement; // Type assertion
+                
+                    // Evita la redirección si el usuario hizo clic en el dropdown o el collapsible trigger
+                    if (target.closest(".collapsible-trigger") || target.closest(".dropdown-trigger")) {
+                        return;
+                    }
+                
+                    // Redirigir a la página
+                    console.log("Redirect to page", page.id);
+                }}
             >
-                <SidebarMenuSubItem
-                    className="group/item cursor-pointer flex flex-row items-center justify-between hover:backdrop-brightness-95 rounded-md"
-                    onMouseEnter={() => setIsHover(true)}
-                    onMouseLeave={() => setIsHover(false)}
-                >
-                    <div className="flex items-center">
+                <div className="flex items-center">
+                    <CollapsibleTrigger
+                        asChild
+                        onMouseEnter={() => setIsHover(true)}
+                        onMouseLeave={() => setIsHover(false)}
+                        className="collapsible-trigger"
+                        onClick={(e) => e.stopPropagation()}
+                        // className="bg-red-500"
+                    >
                         {/* Show ChevronRight if hovered or collapsible is open */}
                         {isHover && hasChildren ? (
-                            <ChevronRight className="h-4 w-4 mr-2 transition-transform duration-200 ease-in-out group-data-[state=open]/item:rotate-90" />
+                            <ChevronRight className="bg-red-500 h-4 w-4 mr-2 transition-transform duration-200 ease-in-out group-data-[state=open]/item:rotate-90" />
                         ) : // Show Folder or File icon based on `isFolder`
                         isFolder ? (
                             <Folder className="h-4 w-4 mr-2 shrink-0 text-sidebar-foreground/70" />
                         ) : (
                             <File className="h-4 w-4 mr-2 shrink-0 text-sidebar-foreground/70" />
                         )}
+                    </CollapsibleTrigger>
+                    {isRenaming ? (
+                        <form
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                handleRename();
+                            }}
+                            className="flex-1"
+                        >
+                            <Input
+                                value={newTitle}
+                                onChange={(e) => setNewTitle(e.target.value)}
+                                className="h-7 py-1 bg-sidebar-accent text-sidebar-foreground"
+                                autoFocus
+                                onBlur={handleRename}
+                                disabled={isLoading}
+                            />
+                        </form>
+                    ) : (
+                        page.title
+                    )}
+                </div>
 
-                        {isRenaming ? (
-                            <form
-                                onSubmit={(e) => {
-                                    e.preventDefault();
-                                    handleRename();
-                                }}
-                                className="flex-1"
+                <div className="flex items-center mr-1">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="dropdown-trigger h-6 w-6 shrink-0 opacity-0 group-hover/item:opacity-100 transition-opacity"
+                                disabled={isLoading}
+                                onClick={(e) => e.stopPropagation()}
                             >
-                                <Input
-                                    value={newTitle}
-                                    onChange={(e) =>
-                                        setNewTitle(e.target.value)
-                                    }
-                                    className="h-7 py-1 bg-sidebar-accent text-sidebar-foreground"
-                                    autoFocus
-                                    onBlur={handleRename}
-                                    disabled={isLoading}
-                                />
-                            </form>
-                        ) : (
-                            page.title
-                        )}
-                    </div>
-                    <div className="flex items-center mr-1">
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-6 w-6 shrink-0 opacity-0 group-hover/item:opacity-100 transition-opacity"
-                                    disabled={isLoading}
-                                >
-                                    <MoreHorizontal className="h-4 w-4" />
-                                    <span className="sr-only">
-                                        More options
-                                    </span>
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" onMouseEnter={() => setIsHover(false)} className="w-48 *:cursor-pointer">
-                                <DropdownMenuItem
-                                    onClick={() => setIsAddingPage(true)}
-                                    disabled={isLoading}
-                                >
-                                    <Plus className="h-4 w-4 mr-2" />
-                                    Add Page
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    onClick={() => setIsRenaming(true)}
-                                    disabled={isLoading}
-                                >
-                                    <Edit className="h-4 w-4 mr-2" />
-                                    Rename
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    onClick={handleDelete}
-                                    className="text-destructive focus:text-destructive"
-                                    disabled={isLoading}
-                                >
-                                    <Trash className="h-4 w-4 mr-2" />
-                                    Delete
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                </SidebarMenuSubItem>
-            </CollapsibleTrigger>
+                                <MoreHorizontal className="h-4 w-4" />
+                                <span className="sr-only">More options</span>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                            align="end"
+                            onMouseEnter={() => setIsHover(false)}
+                            className="w-48 *:cursor-pointer"
+                        >
+                            <DropdownMenuItem
+                                onClick={() => setIsAddingPage(true)}
+                                disabled={isLoading}
+                            >
+                                <Plus className="h-4 w-4 mr-2" />
+                                Add Page
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() => setIsRenaming(true)}
+                                disabled={isLoading}
+                            >
+                                <Edit className="h-4 w-4 mr-2" />
+                                Rename
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={handleDelete}
+                                className="text-destructive focus:text-destructive"
+                                disabled={isLoading}
+                            >
+                                <Trash className="h-4 w-4 mr-2" />
+                                Delete
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+            </SidebarMenuSubItem>
 
             {isAddingPage && (
                 <div

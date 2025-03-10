@@ -8,22 +8,7 @@ import {
     useState,
 } from "react";
 import axios from "axios";
-
-interface Notebook {
-    id: string;
-    name: string;
-    description: string;
-    spaceId:string;
-    pages: Page[];
-}
-
-interface Page {
-    id: string;
-    title: string;
-    parentId: string | null;
-    ancestors: string[];
-    notebookId: string;
-}
+import { Notebook, Page } from "@/types";
 
 type Action =
     | { type: "ADD_NOTEBOOK"; payload: Notebook }

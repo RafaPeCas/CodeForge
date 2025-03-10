@@ -1,7 +1,6 @@
 import { Head } from "@inertiajs/react";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Separator } from "@/Components/ui/separator";
 
 export default function SidebarPage({
     children,

@@ -57,12 +57,10 @@ const handleLogout = () => {
 interface NotebookProps {
     spaces: Space[];
     fetchSpaces: () => void;
-    fetchNotebooks: () => void;
 }
 export function NotebookSidebar({
     spaces,
     fetchSpaces,
-    fetchNotebooks,
 }: NotebookProps) {
     const { notebooks } = useNotebooks();
     const user = usePage().props.auth.user;
@@ -73,7 +71,6 @@ export function NotebookSidebar({
                 <SpaceSwitch
                     spaces={spaces}
                     onSpaceCreated={fetchSpaces}
-                    onSpaceChanged={fetchNotebooks}
                 />
             </SidebarHeader>
             <SidebarContent>

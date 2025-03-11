@@ -4,11 +4,11 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/Components/ui/sidebar";
-import { NotebookProvider } from "@/contexts/notebookContext";
 import { NotebookSidebar } from "@/Components/sidebar/NotebookSidebar";
 import { Notebook, Space } from "@/types";
 import axios from "axios";
 import { PropsWithChildren, ReactNode, useEffect, useState } from "react";
+
 
 export default function Authenticated({
     header,
@@ -66,16 +66,13 @@ export default function Authenticated({
 
     useEffect(() => {
         fetchSpaces();
-        console.log("Fetch")
-        fetchNotebooks();
+        console.log("Fetch Spaces")
     }, []);
 
     return (
-        <NotebookProvider providedNotebooks={notebooks}>
             <SidebarProvider>
                 <NotebookSidebar
                     spaces={spaces}
-                    fetchNotebooks={fetchNotebooks}
                     fetchSpaces={fetchSpaces}
                 />
                 <SidebarInset>
@@ -90,6 +87,5 @@ export default function Authenticated({
                     {children}
                 </SidebarInset>
             </SidebarProvider>
-        </NotebookProvider>
     );
 }

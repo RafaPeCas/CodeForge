@@ -56,7 +56,7 @@ export default function Authenticated({
         try {
             // Fetch notebooks and their pages from the backend
             const response = await axios.get<Notebook[]>(
-                `notebooks/${spaceId}`
+                `../notebooks/${spaceId}`
             );
             setNotebooks(response.data);
         } catch (error) {

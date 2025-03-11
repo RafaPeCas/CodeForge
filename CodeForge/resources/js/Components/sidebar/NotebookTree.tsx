@@ -50,7 +50,7 @@ export function NotebookTree({ notebook }: { notebook: Notebook }) {
     };
     // todo dropdown menu crud notebooks
     return (
-        <Collapsible className="group/collapsible">
+        <Collapsible className="group/collapsible" disabled={rootPages.length === 0}>
             <CollapsibleTrigger
                 asChild
                 onMouseEnter={() => open && setIsHover(true)}
@@ -66,7 +66,7 @@ export function NotebookTree({ notebook }: { notebook: Notebook }) {
                         ) : (
                             <Book className="h-5 w-5" />
                         )}
-                        <span className="group-data-[collapsible=icon]:hidden ml-2">
+                        <span className="group-data-[collapsible=icon]:hidden ml-2 select-none">
                     {notebook.name}
                         </span>
                     </div>

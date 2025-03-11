@@ -28,11 +28,11 @@ export default function Register() {
 
             <form onSubmit={submit}>
                 <div>
-                    <InputLabel htmlFor="name" value="Name" />
+                    <InputLabel htmlFor="username" value="username" />
 
                     <TextInput
                         id="name"
-                        name="name"
+                        name="username"
                         value={data.name}
                         className="mt-1 block w-full"
                         autoComplete="name"

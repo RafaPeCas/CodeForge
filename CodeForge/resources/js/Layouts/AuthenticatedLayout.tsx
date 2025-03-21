@@ -39,30 +39,6 @@ export default function Authenticated({
             console.error("Error:", error);
         }
     };
-    
-    const fetchNotebooks = async (): Promise<void> => {
-        const savedSpace = localStorage.getItem("activeSpace");
-        let spaceId: string;
-
-        if (savedSpace) {
-            spaceId = JSON.parse(savedSpace).id;
-        } else if (spaces.length > 0) {
-            spaceId = spaces[0].id;
-        } else {
-            console.error("No space ID available");
-            return;
-        }
-
-        try {
-            // Fetch notebooks and their pages from the backend
-            const response = await axios.get<Notebook[]>(
-                `../notebooks/${spaceId}`
-            );
-            setNotebooks(response.data);
-        } catch (error) {
-            console.error("Error:", error);
-        }
-    };
 
     useEffect(() => {
         fetchSpaces();

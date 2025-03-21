@@ -10,6 +10,11 @@ export default function AppLayout({
     const { auth } = usePage().props;
     const username = auth?.user?.username;
 
+    if (children?.type?.name === "Welcome") {
+        // Aquí puedes manejar el caso específico para el componente Welcome
+        return <>{children}</>;
+    }
+    
     if (!username) {
         // If no user is authenticated, render the guest layout
         return <Guest>{children}</Guest>;

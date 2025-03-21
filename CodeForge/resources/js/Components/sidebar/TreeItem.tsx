@@ -78,9 +78,9 @@ export function TreeItem({
     };
 
     return (
-        <Collapsible className="group/collapsible">
+        <Collapsible className="group select-none">
             <SidebarMenuSubItem
-                className="group/item cursor-pointer flex flex-row items-center justify-between hover:backdrop-brightness-95 rounded-md"
+                className=" cursor-pointer flex flex-row items-center justify-between hover:backdrop-brightness-95 rounded-md"
                 onMouseEnter={() => setIsHover(true)}
                 onMouseLeave={() => setIsHover(false)}
                 onClick={(event) => {
@@ -100,13 +100,14 @@ export function TreeItem({
                         asChild
                         onMouseEnter={() => setIsHover(true)}
                         onMouseLeave={() => setIsHover(false)}
-                        className="collapsible-trigger"
+                        className="collapsible-trigger "
                         onClick={(e) => e.stopPropagation()}
                         // className="bg-red-500"
                     >
                         {/* Show ChevronRight if hovered or collapsible is open */}
                         {isHover && hasChildren ? (
-                            <ChevronRight className="bg-red-500 h-4 w-4 mr-2 transition-transform duration-200 ease-in-out group-data-[state=open]/item:rotate-90" />
+                            <ChevronRight className="h-4 w-4 mr-2 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-90" />
+                            // transition-transform duration-200 ease-in-out group-data-[state=open]/item:rotate-90
                         ) : // Show Folder or File icon based on `isFolder`
                         isFolder ? (
                             <Folder className="h-4 w-4 mr-2 shrink-0 text-sidebar-foreground/70" />
@@ -132,7 +133,7 @@ export function TreeItem({
                             />
                         </form>
                     ) : (
-                        page.title
+                            page.title
                     )}
                 </div>
 

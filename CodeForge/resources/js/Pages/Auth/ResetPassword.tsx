@@ -29,7 +29,7 @@ export default function ResetPassword({
     };
 
     return (
-        <GuestLayout>
+        <>
             <Head title="Reset Password" />
 
             <form onSubmit={submit}>
@@ -95,6 +95,6 @@ export default function ResetPassword({
                     </PrimaryButton>
                 </div>
             </form>
-        </GuestLayout>
+        </>
     );
 }

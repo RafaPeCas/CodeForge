@@ -19,11 +19,12 @@ import { CreateSpaceDialog } from "./CreateSpaceDialog"; // Importa el nuevo com
 import axios from "axios";
 import { z } from "zod";
 import { Space } from "@/types";
+import { useNotebooks } from "@/contexts/notebookContext";
 
 interface SpaceSwitchProps {
     spaces: Space[];
     onSpaceCreated: () => void;
-    onSpaceChanged: () => void;
+
 }
 
 const createSpaceSchema = z.object({
@@ -31,7 +32,8 @@ const createSpaceSchema = z.object({
     spaceDescription: z.string().min(0).max(255),
 });
 
-export function SpaceSwitch({ spaces, onSpaceCreated, onSpaceChanged }: SpaceSwitchProps) {
+export function SpaceSwitch({ spaces, onSpaceCreated,  }: SpaceSwitchProps) {
+    const { fetchNotebooks } = useNotebooks();
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const { isMobile } = useSidebar();
     const [activeSpace, setActiveSpace] = useState<Space | null>(null);
@@ -43,7 +45,7 @@ export function SpaceSwitch({ spaces, onSpaceCreated, onSpaceChanged }: SpaceSwi
             setActiveSpace(JSON.parse(savedSpace));
         } else if (spaces.length > 0) {
             setActiveSpace(spaces[0]);
-            onSpaceChanged();
+            fetchNotebooks();
         }
     }, [spaces]);
 
@@ -68,7 +70,7 @@ export function SpaceSwitch({ spaces, onSpaceCreated, onSpaceChanged }: SpaceSwi
     const handleSpaceChange = (space: Space) => {
         setActiveSpace(space);
         localStorage.setItem("activeSpace", JSON.stringify(space));
-        onSpaceChanged();
+        fetchNotebooks();
     };
 
     return (

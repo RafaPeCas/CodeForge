@@ -38,6 +38,7 @@ interface NotebookContextProps {
         title: string
     ) => Promise<void>;
     deletePage: (notebookId: string, id: string) => Promise<void>;
+    fetchNotebooks: () => Promise<void>;
 }
 
 const api = {
@@ -112,16 +113,35 @@ export function useNotebooks() {
 //provider
 export function NotebookProvider({
     children,
-    providedNotebooks,
 }: {
     children: ReactNode;
-    providedNotebooks: Notebook[];
 }) {
-    const [notebooks, setNotebooks] = useState<Notebook[]>(providedNotebooks);
+    const [notebooks, setNotebooks] = useState<Notebook[]>([]);
+
+    const fetchNotebooks = async (): Promise<void> => {
+        const savedSpace = localStorage.getItem("activeSpace");
+        let spaceId: string | undefined;
+
+        if (savedSpace) {
+            spaceId = JSON.parse(savedSpace).id;
+        }
+
+        if (!spaceId) {
+            console.error("No space ID available");
+            return;
+        }
+
+        try {
+            const response = await axios.get<Notebook[]>(`/notebooks/${spaceId}`);
+            setNotebooks(response.data);
+        } catch (error) {
+            console.error("Error fetching notebooks:", error);
+        }
+    };
 
     useEffect(() => {
-        setNotebooks(providedNotebooks);
-    }, [providedNotebooks]); // Depend on providedNotebooks
+        fetchNotebooks();
+    }, []);
 
     const calculateAncestors = (
         notebook: Notebook,
@@ -442,6 +462,7 @@ export function NotebookProvider({
         addPage,
         updatePage,
         deletePage,
+        fetchNotebooks,
     };
 
     return (
@@ -449,15 +470,4 @@ export function NotebookProvider({
             {children}
         </NotebooksContext.Provider>
     );
-}
-// Helper function to get all descendants of a page
-function getDescendants(pageId: string, allPages: Page[]): Page[] {
-  const directChildren = allPages.filter(p => p.parentId === pageId)
-  const descendants = [...directChildren]
-  
-  directChildren.forEach(child => {
-    descendants.push(...getDescendants(child.id, allPages))
-  })
-  
-  return descendants
 }

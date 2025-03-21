@@ -15,7 +15,7 @@ import { DoorOpen, Edit, FormInputIcon, Home, PanelLeftIcon } from "lucide-react
 import { NotebookTree } from "./NotebookTree";
 import { useNotebooks } from "../../contexts/notebookContext";
 import { SpaceSwitch } from "@/Components/sidebar/SpaceSwitch";
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 import { Space } from "@/types";
 import { AddNotebookDialog } from "./AddDialog";
 
@@ -57,26 +57,25 @@ const handleLogout = () => {
 interface NotebookProps {
     spaces: Space[];
     fetchSpaces: () => void;
-    fetchNotebooks: () => void;
 }
 export function NotebookSidebar({
     spaces,
     fetchSpaces,
-    fetchNotebooks,
 }: NotebookProps) {
     const { notebooks } = useNotebooks();
+    const user = usePage().props.auth.user;
+    
     return (
         <Sidebar collapsible="icon">
             <SidebarHeader>
                 <SpaceSwitch
                     spaces={spaces}
                     onSpaceCreated={fetchSpaces}
-                    onSpaceChanged={fetchNotebooks}
                 />
             </SidebarHeader>
             <SidebarContent>
             <SidebarGroup>
-                    <SidebarGroupLabel>Application</SidebarGroupLabel>
+                    <SidebarGroupLabel>Application,{user.username}</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {nav.map((item, index) => (

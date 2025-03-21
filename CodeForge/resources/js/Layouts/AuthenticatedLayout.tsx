@@ -4,11 +4,11 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/Components/ui/sidebar";
-import { NotebookProvider } from "@/contexts/notebookContext";
 import { NotebookSidebar } from "@/Components/sidebar/NotebookSidebar";
 import { Notebook, Space } from "@/types";
 import axios from "axios";
 import { PropsWithChildren, ReactNode, useEffect, useState } from "react";
+
 
 export default function Authenticated({
     header,
@@ -39,43 +39,16 @@ export default function Authenticated({
             console.error("Error:", error);
         }
     };
-    
-    const fetchNotebooks = async (): Promise<void> => {
-        const savedSpace = localStorage.getItem("activeSpace");
-        let spaceId: string;
-
-        if (savedSpace) {
-            spaceId = JSON.parse(savedSpace).id;
-        } else if (spaces.length > 0) {
-            spaceId = spaces[0].id;
-        } else {
-            console.error("No space ID available");
-            return;
-        }
-
-        try {
-            // Fetch notebooks and their pages from the backend
-            const response = await axios.get<Notebook[]>(
-                `notebooks/${spaceId}`
-            );
-            setNotebooks(response.data);
-        } catch (error) {
-            console.error("Error:", error);
-        }
-    };
 
     useEffect(() => {
         fetchSpaces();
-        console.log("Fetch")
-        fetchNotebooks();
+        console.log("Fetch Spaces")
     }, []);
 
     return (
-        <NotebookProvider providedNotebooks={notebooks}>
             <SidebarProvider>
                 <NotebookSidebar
                     spaces={spaces}
-                    fetchNotebooks={fetchNotebooks}
                     fetchSpaces={fetchSpaces}
                 />
                 <SidebarInset>
@@ -90,6 +63,5 @@ export default function Authenticated({
                     {children}
                 </SidebarInset>
             </SidebarProvider>
-        </NotebookProvider>
     );
 }

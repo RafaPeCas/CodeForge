@@ -109,9 +109,7 @@ export default function SpaceForm() {
     }, []);
 
     return (
-        <AuthenticatedLayout
-            header="Crear Espacio"
-        >
+        <>
             {error && (
                 <Alert
                     variant={"destructive"}
@@ -309,6 +307,6 @@ export default function SpaceForm() {
                     <Button type="submit">Submit</Button>
                 </form>
             </Form>
-        </AuthenticatedLayout>
+        </>
     );
 }

@@ -14,7 +14,8 @@ export default function AppLayout({
         // Aquí puedes manejar el caso específico para el componente Welcome
         return <>{children}</>;
     }
-    
+    console.log("Page Name", children?.type?.name);
+    console.log("Username", username);
     if (!username) {
         // If no user is authenticated, render the guest layout
         return <Guest>{children}</Guest>;

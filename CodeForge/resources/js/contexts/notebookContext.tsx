@@ -121,8 +121,9 @@ export function NotebookProvider({
     const fetchNotebooks = async (): Promise<void> => {
         const savedSpace = localStorage.getItem("activeSpace");
         let spaceId: string | undefined;
-
+        
         if (savedSpace) {
+            console.log("savedSpace:", savedSpace);
             spaceId = JSON.parse(savedSpace).id;
         }
 

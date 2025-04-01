@@ -46,6 +46,7 @@ class NotebookController extends Controller
                 ->where('isCurrent', true)
                 ->get(['_id', 'title', 'parentId', 'ancestors']);
             // Add pages to the notebook object
+            error_log($pages);
             $notebook->pages = $pages;
     
             return $notebook;

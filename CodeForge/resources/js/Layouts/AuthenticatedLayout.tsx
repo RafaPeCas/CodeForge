@@ -5,7 +5,7 @@ import {
     SidebarTrigger,
 } from "@/Components/ui/sidebar";
 import { NotebookSidebar } from "@/Components/sidebar/NotebookSidebar";
-import { Notebook, Space } from "@/types";
+import { Space } from "@/types";
 import axios from "axios";
 import { PropsWithChildren, ReactNode, useEffect, useState } from "react";
 
@@ -22,7 +22,6 @@ export default function Authenticated({
             id: "",
         },
     ]);
-    const [notebooks, setNotebooks] = useState<Notebook[]>([]);
 
     const fetchSpaces = async () => {
         try {
@@ -35,6 +34,8 @@ export default function Authenticated({
             }));
 
             setSpaces(transformedSpaces);
+            console.log("transformedSpaces:", transformedSpaces);
+            console.log("spaces:", spaces);
         } catch (error) {
             console.error("Error:", error);
         }

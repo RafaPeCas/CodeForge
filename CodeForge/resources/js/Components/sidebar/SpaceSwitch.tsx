@@ -42,9 +42,17 @@ export function SpaceSwitch({ spaces, onSpaceCreated,  }: SpaceSwitchProps) {
     useEffect(() => {
         const savedSpace = localStorage.getItem("activeSpace");
         if (savedSpace) {
-            setActiveSpace(JSON.parse(savedSpace));
-        } else if (spaces.length > 0) {
+            try {
+                console.log("Saved Space:", savedSpace);
+                setActiveSpace(JSON.parse(savedSpace));
+            } catch (error) {
+                console.error("Error parsing saved space:", error);
+                localStorage.removeItem("activeSpace"); // Clear invalid data
+            }
+        } else if (spaces.length > 0 && spaces[0].id !== "") {
+            console.log("Spaces updated:", spaces);
             setActiveSpace(spaces[0]);
+            localStorage.setItem("activeSpace", JSON.stringify(spaces[0]));
             fetchNotebooks();
         }
     }, [spaces]);

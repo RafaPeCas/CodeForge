@@ -1,14 +1,14 @@
-export default function Smiley() {
+export default function Cute() {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="31"
-            height="16"
-            viewBox="0 0 31 16"
+            width="34"
+            height="19"
+            viewBox="0 0 34 19"
             fill="none"
         >
             <path
-                d="M28.8 6.70001C26.3 7.80001 25.1 5.6 21.2 7.5C18.4 8.8 16.9 9.20001 13.5 7.20001C11.3 5.80001 8.6 7.8 6 4"
+                d="M28.1 2.40592C28.1 2.40592 30.7 1.00592 32.1 3.40592C33.5 5.80592 30.1 8.50591 30.1 8.50591C30.1 8.50591 33.9 11.3059 31.3 14.8059C29.2 17.6059 26 17.4059 26 17.4059"
                 stroke="#423232"
                 stroke-width="3"
                 stroke-miterlimit="10"

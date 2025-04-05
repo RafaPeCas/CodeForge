@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function Outfit01() {
     return (
         <svg

@@ -1,16 +1,16 @@
-export default function Smiley() {
+export default function NomalThin() {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="31"
+            width="30"
             height="16"
-            viewBox="0 0 31 16"
+            viewBox="0 0 30 16"
             fill="none"
         >
             <path
-                d="M28.8 6.70001C26.3 7.80001 25.1 5.6 21.2 7.5C18.4 8.8 16.9 9.20001 13.5 7.20001C11.3 5.80001 8.6 7.8 6 4"
-                stroke="#423232"
-                stroke-width="3"
+                d="M25.5 4.5C21.1 7.1 14.1 5.5 9 2"
+                stroke="#FEE4BF"
+                stroke-width="2.4681"
                 stroke-miterlimit="10"
                 stroke-linecap="round"
                 stroke-linejoin="round"

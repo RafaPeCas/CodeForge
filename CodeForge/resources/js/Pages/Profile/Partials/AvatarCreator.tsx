@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { Undo, Redo } from "lucide-react";
 import { Button } from "@/Components";
@@ -15,8 +13,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/Components/ui/radio-group";
 import Fair from "@/Components/svgs/face/Fair";
 import Beard from "@/Components/svgs/face/Beard";
-import Style01 from "@/Components/svgs/hair/style01";
-import Style02 from "@/Components/svgs/hair/style02";
+import Style01 from "@/Components/svgs/hair/Style01";
+import Style02 from "@/Components/svgs/hair/Style02";
 import Normal from "@/Components/svgs/eyes/Normal";
 import NormalSmile from "@/Components/svgs/mouth/NormalSmile";
 import Smiley from "@/Components/svgs/mouth/Smiley";
@@ -87,6 +85,7 @@ export default function AvatarCreator() {
 
     // Create the combined SVG
     const renderAvatar = () => {
+        //scale-50
         return (
             <div
                 id="avatar-svg"
@@ -141,7 +140,6 @@ export default function AvatarCreator() {
                         <FuturisticGlasses />
                     ) : null}
                 </div>
-
 
             </div>
         );

@@ -13,7 +13,7 @@ export default function Outfit07() {
             />
             <mask
                 id="mask0_4_1829"
-                style="mask-type:alpha"
+                style={{ maskType: "alpha" }}
                 maskUnits="userSpaceOnUse"
                 x="7"
                 y="2"

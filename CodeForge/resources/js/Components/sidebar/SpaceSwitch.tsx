@@ -20,6 +20,8 @@ import axios from "axios";
 import { z } from "zod";
 import { Space } from "@/types";
 import { useNotebooks } from "@/contexts/notebookContext";
+import AvatarPreview from "../avatar/AvatarPreview";
+import { useAvatar } from "@/contexts/avatarContext";
 
 interface SpaceSwitchProps {
     spaces: Space[];
@@ -80,7 +82,7 @@ export function SpaceSwitch({ spaces, onSpaceCreated,  }: SpaceSwitchProps) {
         localStorage.setItem("activeSpace", JSON.stringify(space));
         fetchNotebooks();
     };
-
+    const { avatar } = useAvatar();
     return (
         <>
             <SidebarMenu>
@@ -91,7 +93,8 @@ export function SpaceSwitch({ spaces, onSpaceCreated,  }: SpaceSwitchProps) {
                                 size="lg"
                                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                             >
-                                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground"></div>
+                                {/* w-64 h-64 md:w-72 md:h-72 flex items-center justify-center */}
+                                <div className="size-13 flex items-center justify-center"><AvatarPreview avatar={avatar} classname="scale-16" /></div>
                                 <div className="grid flex-1 text-left text-sm leading-tight">
                                     <span className="truncate font-semibold">
                                         {activeSpace?.name || "Loading..."}

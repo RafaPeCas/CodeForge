@@ -8,6 +8,7 @@ import { NotebookSidebar } from "@/Components/sidebar/NotebookSidebar";
 import { Space } from "@/types";
 import axios from "axios";
 import { PropsWithChildren, ReactNode, useEffect, useState } from "react";
+import { AvatarProvider } from "@/contexts/avatarContext";
 
 
 export default function Authenticated({
@@ -48,6 +49,7 @@ export default function Authenticated({
 
     return (
             <SidebarProvider>
+                <AvatarProvider>
                 <NotebookSidebar
                     spaces={spaces}
                     fetchSpaces={fetchSpaces}
@@ -63,6 +65,7 @@ export default function Authenticated({
                     </header>
                     {children}
                 </SidebarInset>
+                </AvatarProvider>
             </SidebarProvider>
     );
 }

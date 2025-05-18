@@ -2,8 +2,8 @@ export default function Fair() {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="193"
-            height="243"
+            width={193}
+            height={243}
             viewBox="0 0 193 243"
             fill="none"
         >
@@ -30,8 +30,8 @@ export default function Fair() {
             <path
                 d="M73.3995 98.4C73.3995 98.4 69.7995 96.1 70.1995 92.1C70.7995 87.4 70.1995 84.5 67.9995 83.6C62.4995 81.3 61.3995 87.7 61.5995 88.5"
                 stroke="#423232"
-                stroke-width="3"
-                stroke-miterlimit="10"
+                stroke-width={3}
+                stroke-miterlimit={10}
                 stroke-linecap="round"
                 stroke-linejoin="round"
             />
@@ -42,8 +42,8 @@ export default function Fair() {
             <path
                 d="M152.7 74.5C152.7 74.5 152.9 84 159 94.6C161.7 99.3 157.6 107 148.7 108.3"
                 stroke="#423232"
-                stroke-width="3"
-                stroke-miterlimit="10"
+                stroke-width={3}
+                stroke-miterlimit={10}
                 stroke-linecap="round"
                 stroke-linejoin="round"
             />

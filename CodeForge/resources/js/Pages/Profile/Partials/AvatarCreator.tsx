@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Undo, Redo } from "lucide-react";
 import { Button } from "@/Components";
@@ -26,6 +27,8 @@ import Earring from "@/Components/svgs/accessories/Earring";
 import FuturisticGlasses from "@/Components/svgs/accessories/FuturisticGlasses";
 import Outfit01 from "@/Components/svgs/outfits/Outfit01";
 import Outfit02 from "@/Components/svgs/outfits/Outfit02";
+import { useAvatar } from "@/contexts/avatarContext";
+import AvatarPreview from "@/Components/avatar/AvatarPreview";
 
 interface Avatar {
     face: "fair" | "beard";
@@ -44,23 +47,20 @@ interface Avatar {
 
 export default function AvatarCreator() {
     // Avatar state
-    const [avatar, setAvatar] = useState<Avatar>({
-        face: "fair",
-        eyes: "normal",
-        mouth: "normalSmile",
-        hair: "style01",
-        accessory: "none",
-        outfit: "none",
-    });
+    // Inside AvatarCreator component
+    const { avatar, setAvatar } = useAvatar();
+
 
     // History for undo/redo
     const [history, setHistory] = useState([avatar]);
     const [historyIndex, setHistoryIndex] = useState(0);
 
-    // Update avatar and add to history
+
+
+    // Replace updateAvatar
     const updateAvatar = <K extends keyof Avatar>(key: K, value: Avatar[K]) => {
-        const newAvatar = { ...avatar, [key]: value };
-        setAvatar(newAvatar);
+    const newAvatar = { ...avatar, [key]: value };
+    setAvatar(newAvatar);
 
         // Add to history, removing any future states if we're not at the end
         const newHistory = history.slice(0, historyIndex + 1).concat(newAvatar);
@@ -82,76 +82,13 @@ export default function AvatarCreator() {
             setAvatar(history[historyIndex + 1]);
         }
     };
-
-    // Create the combined SVG
-    const renderAvatar = () => {
-        //scale-50
-        return (
-            <div
-                id="avatar-svg"
-                className="relative w-full h-full flex items-center justify-center"
-            >
-                {/* Base Face */}
-                {avatar.face === "fair" ? <Fair /> : <Beard />}
-
-                {/* Eyes */}
-                <div className="absolute translate-x-11.5 -translate-y-12.5">
-                    {avatar.eyes === "normal" ? <Normal /> : <Angry />}
-                </div>
-
-                {/* Mouth */}
-                <div className="absolute translate-x-6 translate-y-3">
-                    {avatar.mouth === "normalSmile" ? (
-                        <NormalSmile />
-                    ) : (
-                        <Smiley />
-                    )}
-                </div>
-                {/* Outfit */}
-                <div className="absolute translate-x-4.5 translate-y-25">
-                    {avatar.outfit === "outfit01" ? (
-                        <Outfit01 />
-                    ) : avatar.outfit === "outfit02" ? (
-                        // translate-x-5.5 translate-y-26
-                        <Outfit02 />
-                    ) : null}
-                </div>
-                {/* Hair */}
-                <div className="absolute translate-x-3 -translate-y-10">
-                    {avatar.hair === "style01" ? (
-                        <Style01 />
-                    ) : avatar.hair === "style02" ? (
-                        <Style02 />
-                    ) : null}
-                </div>
-
-                {/* Accessories */}
-                <div className="absolute translate-x-5.5 translate-y-1">
-                    {avatar.accessory === "cap" ? (
-                        <Cap />
-                    ) : avatar.accessory === "earphones" ? (
-                        <Earphones />
-                    ) : avatar.accessory === "circleEarring" ? (
-                        <CircleEarring />
-                    ) : avatar.accessory === "earring" ? (
-                      // translate-x-5.5 translate-y-1
-                        <Earring />
-                    ) : avatar.accessory === "futuristicGlasses" ? (
-                        <FuturisticGlasses />
-                    ) : null}
-                </div>
-
-            </div>
-        );
-    };
-
     return (
         <div className="flex flex-col md:flex-row gap-8 w-full max-w-6xl mx-auto p-4">
             {/* Avatar Preview */}
             <div className="flex-1 flex flex-col items-center gap-4">
-                <div className="p-8 flex items-center justify-center bg-white rounded-lg shadow-md">
-                    <div className="w-64 h-64 md:w-80 md:h-80 flex items-center justify-center">
-                        {renderAvatar()}
+                <div className="p-8 flex items-center justify-center bg-green-700/40 rounded-lg shadow-md">
+                    <div className="w-64 h-64 md:w-72 md:h-72 flex items-center justify-center">
+                        <AvatarPreview avatar={avatar}/>
                     </div>
                 </div>
 
@@ -187,7 +124,7 @@ export default function AvatarCreator() {
                         </TabsTrigger>
                     </TabsList>
 
-                    <TabsContent value="face" className="space-y-4">
+                    <TabsContent value="face" className="space-y-4 select-none">
                         <div className="space-y-2">
                             <Label>Face Type</Label>
                             <RadioGroup
@@ -263,7 +200,7 @@ export default function AvatarCreator() {
                         </div>
                     </TabsContent>
 
-                    <TabsContent value="hair" className="space-y-4">
+                    <TabsContent value="hair" className="space-y-4 select-none">
                         <div className="space-y-2">
                             <Label>Hair Style</Label>
                             <Select
@@ -288,7 +225,7 @@ export default function AvatarCreator() {
                         </div>
                     </TabsContent>
 
-                    <TabsContent value="features" className="space-y-4">
+                    <TabsContent value="features" className="space-y-4 select-none">
                         <div className="space-y-2">
                             <Label>Outfit</Label>
                             <Select
@@ -313,7 +250,7 @@ export default function AvatarCreator() {
                         </div>
                     </TabsContent>
 
-                    <TabsContent value="accessories" className="space-y-4">
+                    <TabsContent value="accessories" className="space-y-4 select-none">
                         <div className="space-y-2">
                             <Label>Accessory</Label>
                             <Select

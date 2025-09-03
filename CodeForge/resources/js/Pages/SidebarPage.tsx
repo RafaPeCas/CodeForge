@@ -1,6 +1,8 @@
 import { Head } from "@inertiajs/react";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { BlockEditor } from "@/Components/block-editor/block-editor";
+import { MarkdownEditor } from "@/Components/block-editor/custom-editor";
 
 export default function SidebarPage({
     children,
@@ -8,18 +10,11 @@ export default function SidebarPage({
     children: React.ReactNode;
 }) {
     return (
-        <>
+        <AuthenticatedLayout header="Main">
             {/* //todo page title */}
-            <Head title="Sidebar Page" />
-            {/* <SidebarComponent/> */}
-            <div className="flex flex-1 flex-col gap-4 p-4 pt-6">
-                <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    <div className="aspect-video rounded-xl bg-muted/50" />
-                    <div className="aspect-video rounded-xl bg-muted/50" />
-                    <div className="aspect-video rounded-xl bg-muted/50" />
-                </div>
-                <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
-            </div>
-        </>
+            <Head title="Main" />
+            <BlockEditor></BlockEditor>
+            <MarkdownEditor></MarkdownEditor>
+        </AuthenticatedLayout>
     );
 }

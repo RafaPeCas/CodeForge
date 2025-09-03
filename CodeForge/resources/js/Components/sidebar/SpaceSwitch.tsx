@@ -57,7 +57,7 @@ export function SpaceSwitch({ spaces, onSpaceCreated,  }: SpaceSwitchProps) {
             const newSpace = {
                 name: response.data.name,
                 logo: "",
-                plan: "author",
+                plan: "Author",
                 id: response.data.id,
             };
             handleSpaceChange(newSpace);

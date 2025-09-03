@@ -14,7 +14,7 @@ createInertiaApp({
     title: (title) => `${title} - ${appName}`,
 
         resolve: async (name) => {
-            const page = (await import(`./Pages/${name}`)).default;
+            const page = (await import(/* @vite-ignore */`./Pages/${name}`)).default;
             page.layout ??= (page:any) => <AppLayout>{page}</AppLayout>;
             return page;
         },
